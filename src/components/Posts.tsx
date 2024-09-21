@@ -51,13 +51,13 @@ function Post({ posts }: IPosts) {
               }`}
             >
               {pathname === "/" && (
-                <div className="w-[12%]">
+                <div className="w-[11%]">
                   <img src={post.imgUrl} alt={post.postedBy} />
                 </div>
               )}
               <div>
-                {pathname === "/" && <p>{post.postedBy}</p>}
-                <p className="text-muted">{post.date}</p>
+                {pathname === "/" && <p className="text-[12px]">{post.postedBy}</p>}
+                <p className="text-muted text-[11px]">{post.date}</p>
               </div>
 
               {pathname === "/my-articles" && <Actions post={post} />}

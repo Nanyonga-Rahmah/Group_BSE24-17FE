@@ -70,14 +70,14 @@ function LandingPage({ status }: IStatus) {
   return (
     <div>
       <div className=" p-5 md:px-20 bg-gradient-45 md:min-h-[70vh] max-w-[100vw] overflow-x-hidden ">
-        <div className="md:py-7">
+        <div className="md:py-7 sticky top-0">
           <Header status={status} />
         </div>
         <Hero />
       </div>
       <main className="max-w-[100vw] w-[90vw] mx-auto overflow-x-hidden">
         <Tabs defaultValue="all" className="md:mt-10 mt-5  w-[90vw]">
-        <TabsList className="md:w-full max-w-[90vw] mx-auto overflow-x-scroll">
+        <TabsList className="md:w-full max-w-[90vw] mx-auto overflow-x-auto">
             <TabsTrigger value="all">All</TabsTrigger>
             <TabsTrigger value="marketing">Marketing</TabsTrigger>
             <TabsTrigger value="technology">Technology</TabsTrigger>

@@ -8,11 +8,11 @@ export interface IStatus {
 }
 function Header({ status }: IStatus) {
   return (
-    <div className="flex justify-between md:justify-around ">
+    <div className="flex sticky top-0  justify-between md:justify-around ">
       <Link to="/">
-        <h3 className="font-bold text-[22px] font-[Raleway]">
-          <span className="text-primary">Good</span>
-          <span className="text-white">Blogger</span>
+        <h3 className=" text-[22px] font-[Raleway]">
+          <span className="text-primary font-bold ">Good</span>
+          <span className="text-white font-normal">Blogger</span>
         </h3>
       </Link>
       <div className="flex gap-5 text-base font-normal text-white items-center">

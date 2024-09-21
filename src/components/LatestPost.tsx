@@ -42,12 +42,12 @@ function LatestPost() {
           </p>
         </div>
         <div className="flex gap-3 items-center">
-          <div className="w-[12%]">
+          <div className="w-[8%]">
             <img src={latestPost.imgUrl} alt={latestPost.postedBy} />
           </div>
           <div className="flex flex-col">
-            <p>{latestPost.postedBy}</p>
-            <p className="text-muted">{latestPost.date}</p>
+            <p className="text-[12px]">{latestPost.postedBy}</p>
+            <p className="text-muted text-[11px]">{latestPost.date}</p>
           </div>
         </div>
       </div>
