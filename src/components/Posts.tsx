@@ -4,79 +4,30 @@ import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Actions } from "./Actions";
 
-const Posts = [
-  {
-    title: "Health Benefits of a Balanced Diet",
-    description:
-      "Discover the importance of maintaining a balanced diet for overall health...",
-    postedBy: "Nanyonga R",
-    date: "Mar 10,2015",
-    imgUrl: "/images/avatar.png",
-    aboutPostUrl: "/images/aboutpost.png",
-    tags: ["Nutrition", "Health"],
-  },
-  {
-    title: "The Impact of Social Media on Society",
-    description:
-      "Discover the importance of maintaining a balanced diet for overall health...",
-    postedBy: "Aliddeki MB",
-    date: "Mar 10,2015",
-    imgUrl: "/images/avatar.png",
-    aboutPostUrl: "/images/social.png",
-    tags: ["Social", "Impact"],
-  },
-  {
-    title: "10 Tips for Effective Blogging",
-    description:
-      "Discover the importance of maintaining a balanced diet for overall health...",
-    postedBy: "Nanyonga R",
-    date: "Mar 10,2015",
-    imgUrl: "/images/avatar.png",
-    aboutPostUrl: "/images/blogging.png",
-    tags: ["Nutrition", "Health"],
-  },
-  {
-    title: "The Future of Digital Marketing",
-    description:
-      "Discover the importance of maintaining a balanced diet for overall health...",
-    postedBy: "Nanyonga R",
-    date: "Mar 10,2015",
-    imgUrl: "/images/avatar.png",
-    aboutPostUrl: "/images/aboutpost.png",
-    tags: ["Nutrition", "Health"],
-  },
-  {
-    title: "The Impact of Social Media on Society",
-    description:
-      "Discover the importance of maintaining a balanced diet for overall health...",
-    postedBy: "Kayongo JN",
-    date: "Mar 10,2015",
-    imgUrl: "/images/avatar.png",
-    aboutPostUrl: "/images/social.png",
-    tags: ["Nutrition", "Health"],
-  },
-  {
-    title: "10 Tips for Effective Blogging",
-    description:
-      "Discover the importance of maintaining a balanced diet for overall health...",
-    postedBy: "Mutumba R",
-    date: "Mar 10,2015",
-    imgUrl: "/images/avatar.png",
-    aboutPostUrl: "/images/blogging.png",
-    tags: ["Nutrition", "Health"],
-  },
-];
+export interface IPost {
+  title: string;
+  description: string;
+  postedBy: string;
+  date: string;
+  imgUrl: string;
+  aboutPostUrl: string;
+  tags: string[];
+}
+export interface IPosts {
+  posts: IPost[];
+  post?: IPost;
+}
 
-function Post() {
+function Post({ posts }: IPosts) {
   const location = useLocation();
   const { pathname } = location;
   return (
     <>
-      <div className="grid md:grid-cols-3 gap-5 md:mt-4 px-28">
+      <div className="flex flex-col  md:grid md:grid-cols-3 gap-10 md:mt-4 md:px-16">
         {pathname === "/" && <LatestPost />}
-        {Posts.map((post, index) => (
+        {posts.map((post, index) => (
           <div key={index} className="flex flex-col gap-2">
-            <div>
+            <div className="grow">
               <img src={post.aboutPostUrl} alt="About" />
             </div>
             <div className="flex gap-3">
@@ -92,7 +43,13 @@ function Post() {
             </div>
             <div className="font-bold text-[18px]">{post.title}</div>
             <p>{post.description}</p>
-            <div className={`${pathname==='/my-articles'?' flex justify-between':'flex gap-3 '}`}>
+            <div
+              className={`${
+                pathname === "/my-articles"
+                  ? " flex justify-between"
+                  : "flex gap-3 "
+              }`}
+            >
               {pathname === "/" && (
                 <div className="w-[12%]">
                   <img src={post.imgUrl} alt={post.postedBy} />
@@ -103,7 +60,7 @@ function Post() {
                 <p className="text-muted">{post.date}</p>
               </div>
 
-              {pathname === "/my-articles" && <Actions />}
+              {pathname === "/my-articles" && <Actions post={post} />}
             </div>
           </div>
         ))}
@@ -111,7 +68,7 @@ function Post() {
 
       {pathname === "/" && (
         <div className="flex justify-center my-20 ">
-          <Button className="bg-black text-white w-[8%] h-10 rounded-[60px]">
+          <Button className="bg-black text-white md:w-[8%] h-10 rounded-[60px]">
             See More
           </Button>
         </div>

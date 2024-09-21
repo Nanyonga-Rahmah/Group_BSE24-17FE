@@ -5,6 +5,7 @@ import WriteArticle from "./pages/write-article";
 import Profile from "./pages/profile";
 import { useEffect, useState } from "react";
 import MyArticles from "./pages/my-articles";
+import ViewArticle from "./pages/view-article";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
@@ -36,6 +37,11 @@ function App() {
           <Route
             path="/my-articles"
             element={<MyArticles status={isLoggedIn} />}
+          />
+
+          <Route
+            path="/view-article"
+            element={<ViewArticle status={isLoggedIn} />}
           />
         </Routes>
       </BrowserRouter>

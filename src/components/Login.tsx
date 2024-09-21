@@ -10,8 +10,6 @@
 // import { LoginForm } from "./forms/LoginForm";
 // import { SignUpDialog } from "./SignUp";
 
-
-
 // export function LoginDialog() {
 //   return (
 //     <Dialog>
@@ -51,13 +49,12 @@ import {
 
 import { LoginForm } from "./forms/LoginForm";
 import { SignupForm } from "./forms/SignUpForm";
- // Assuming you have a SignupForm component
 
 export function LoginDialog() {
-  const [isLogin, setIsLogin] = useState(true); // State to toggle between login and signup forms
+  const [isLogin, setIsLogin] = useState(true);
 
   const handleToggle = () => {
-    setIsLogin(!isLogin); // Toggle the form
+    setIsLogin(!isLogin);
   };
 
   return (
@@ -67,14 +64,16 @@ export function LoginDialog() {
           Login
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] my-3">
+      <DialogContent className="sm:max-w-[425px] w-[89%] rounded-md my-3">
         <DialogHeader>
           <DialogTitle className="font-bold text-xl text-center">
-            {isLogin ? "Login to access your account" : "Create an Account to Begin Writing"} 
+            {isLogin
+              ? "Login to access your account"
+              : "Create an Account to Begin Writing"}
           </DialogTitle>
         </DialogHeader>
 
-        {isLogin ? <LoginForm /> : <SignupForm />} 
+        {isLogin ? <LoginForm /> : <SignupForm />}
 
         <div className="flex justify-center">
           {isLogin ? (

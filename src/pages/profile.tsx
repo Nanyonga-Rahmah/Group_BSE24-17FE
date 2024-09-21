@@ -6,12 +6,12 @@ import { ChangePasswordForm } from "@/components/forms/ChangePasswordForm";
 function Profile({ status }: IStatus) {
   return (
     <div>
-      <div className=" px-20 bg-gradient-45 md:min-h-[40vh] max-w-[100vw] ">
-        <div className="py-7">
+      <div className=" p-4 bg-gradient-45 md:min-h-[40vh] max-w-[100vw] ">
+        <div className="md:py-7">
           <Header status={status} />
         </div>
         <div className=" flex justify-center items-center  mt-20  ">
-          <h3 className="font-bold text-3xl text-white">Profile</h3>
+          <h3 className="font-bold text-3xl text-white font-[rales]">Profile</h3>
         </div>
       </div>
       <main className="flex justify-center my-6">

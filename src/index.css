@@ -11,7 +11,7 @@
     --popover-foreground: 222.2 84% 4.9%;
     --primary: 58, 100%, 55%;
     --first: 58, 100%, 55%, 1;
-    --second:0, 0%, 13%, 1;
+    --second: 0, 0%, 13%, 1;
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -43,7 +43,7 @@
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
-    --text-inactive:111, 111, 111, 1;
+    --text-inactive: 111, 111, 111, 1;
     --muted-foreground: 215 20.2% 65.1%;
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
@@ -65,15 +65,18 @@
   }
   body {
     @apply bg-background text-foreground;
-  overflow-x: hidden;
-  font-family: "Roboto Slab", serif;
+    overflow-x: hidden;
+    font-family: "Roboto Slab", serif;
   }
 }
 @layer utilities {
   .bg-gradient-45 {
-    background: linear-gradient(30deg,#FFF619  , #222222 50%);
+    background: linear-gradient(30deg, #fff619, #222222 50%);
   }
-.text-muted{
-  color:#6F6F6F ;
-}
+  .text-muted {
+    color: #6f6f6f;
+  }
+  .heading {
+    font-family: "Raleway", sans-serif;
+  }
 }

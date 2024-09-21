@@ -6,16 +6,12 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
- 
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
-
-
 
 const FormSchema = z
   .object({
@@ -32,8 +28,6 @@ const FormSchema = z
   });
 
 export function ChangePasswordForm() {
- 
-
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -51,7 +45,7 @@ export function ChangePasswordForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-[30vw] p-4   space-y-6"
+        className="md:w-[30vw]  p-4   space-y-6"
       >
         <FormField
           control={form.control}
@@ -113,7 +107,7 @@ export function ChangePasswordForm() {
         />
 
         <Button type="submit" className="w-full text-black">
-          SignUp
+          UpDate
         </Button>
       </form>
     </Form>
