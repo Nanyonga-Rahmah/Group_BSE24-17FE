@@ -13,6 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useRef, useState } from "react";
 
 const FormSchema = z.object({
   username: z.string().min(2, {
@@ -26,6 +27,27 @@ const FormSchema = z.object({
 });
 
 export function AboutForm() {
+  const [profilePic, setProfilePic] = useState("/images/avatar.png");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleButtonClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (reader.result) {
+          setProfilePic(reader.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -43,7 +65,7 @@ export function AboutForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-[30vw] p-4   space-y-6"
+        className="md:w-[30vw] p-4   space-y-6"
       >
         <div className="flex flex-col space-y-2">
           <h3>Photo</h3>
@@ -54,13 +76,26 @@ export function AboutForm() {
 
           <div className="flex items-center gap-3">
             <img
-              src="/images/avatar.png"
+              src={profilePic}
               alt="Profile"
               className="w-24 h-24 rounded-full object-cover"
             />
-            <Button variant="outline" className="text-blue-500" type="button">
+            <Button
+              variant="outline"
+              className="text-blue-500"
+              type="button"
+              onClick={handleButtonClick}
+            >
               Update
             </Button>
+
+            <input
+              type="file"
+              accept="image/png, image/jpeg"
+              ref={fileInputRef}
+              style={{ display: "none" }}
+              onChange={handleFileChange}
+            />
           </div>
         </div>
 

@@ -23,31 +23,35 @@ import {
 } from "@/components/ui/select";
 import { RichTextEditor } from "../RichTextEditor";
 
+import { IActionProps } from "../Actions";
+;
+
 const FormSchema = z.object({
   title: z.string().min(1, { message: "Field is required" }),
   description: z.string().min(1, { message: "Field is required" }),
 
   image: z.string().min(1, { message: "Field is required" }),
 
-  category: z.string().min(1, { message: "Field is required " }),
+  category: z.array(z.string()).min(1, { message: "Field is required " }),
 
-  tags: z.string().min(1, { message: "Field is required " }),
+  tags: z.array(z.string()).min(1, { message: "At least one tag is required" }),
 
   sumary: z.string().min(1, { message: "Field is required " }),
 });
 
-export function ArticleForm() {
+export function ArticleForm({ post }: IActionProps) {
+    console.log(post);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      title: "",
+      title: post?.title,
 
-      image: "",
+      image: post?.aboutPostUrl,
 
-      category: "",
+      category: post?.tags,
 
-      sumary: "",
-      tags: "",
+      sumary: post?.description,
+      tags: post?.tags,
 
       description: "",
     },
@@ -187,7 +191,7 @@ export function ArticleForm() {
           type="submit"
           className=" font-semibold  text-[15px] border border-primary text-black w-full  "
         >
-          Publish Article
+          Save Changes
         </Button>
       </form>
     </Form>

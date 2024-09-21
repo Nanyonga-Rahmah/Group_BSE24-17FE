@@ -2,17 +2,17 @@ import { SubscribeForm } from "./forms/SubscribeForm";
 
 function Hero() {
   return (
-    <div className="flex gap-10 my-[9vh] px-5 items-center ">
-      <div className="w-[60vw]  ">
-        <h3 className="text-primary font-normal text-xl">
+    <div className="flex flex-col md:flex-row max-w-[100vw] overflow-x-hidden md:gap-10 my-[9vh] md:px-5 items-center ">
+      <div className="md:w-[60vw] my-4 md:my-0  ">
+        <h3 className="text-primary my-2 md:my-0 font-normal text-xl">
           WELCOME TO GOODBLOGGER
         </h3>
-        <p className="font-bold text-3xl text-white leading-[54px]">
+        <p className="font-bold text-xl md:text-[40px] md:my-2 text-white md:leading-[54px] font-[Raleway]">
           Your go-to platform for sharing insights, stories, and knowledge with
           the world.
         </p>
       </div>
-      <div className="px-10">
+      <div className="md:px-10">
         <p className="text-white text-[18px] font-medium leading-6">
           Subscribe to our news letter: Stay updated with the latest blog posts
           and news by subscribing to our newsletter.
