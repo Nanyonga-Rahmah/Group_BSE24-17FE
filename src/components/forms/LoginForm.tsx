@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -38,6 +36,7 @@ export function LoginForm() {
   });
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
+    console.log(values);
     localStorage.setItem("IsLoggedIn", "true");
     setTimeout(() => {
       navigate("/");

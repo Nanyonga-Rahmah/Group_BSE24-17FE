@@ -3,7 +3,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Edit, Edit2, EyeIcon, Trash, Trash2 } from "lucide-react";
+import { Edit, EyeIcon,Trash2 } from "lucide-react";
 
 export function Actions() {
   return (

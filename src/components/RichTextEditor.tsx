@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from "react";
+import  { useState, useRef, useMemo } from "react";
 import JoditEditor from "jodit-react";
 const options = [
   "bold",

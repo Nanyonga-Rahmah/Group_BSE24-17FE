@@ -100,14 +100,14 @@ export function ArticleForm() {
         <FormField
           control={form.control}
           name="description"
-          render={({ field }) => (
+          render={() => (
             <FormItem className="col-span-1">
               <FormLabel>Article Body *</FormLabel>
               <FormDescription className="font-normal text-muted text-[12px]">
                 Main body of your article
               </FormDescription>
               <FormControl>
-                <RichTextEditor />
+                <RichTextEditor  />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -116,7 +116,7 @@ export function ArticleForm() {
         <FormField
           control={form.control}
           name="category"
-          render={({ field }) => (
+          render={() => (
             <FormItem className="col-span-1">
               <FormLabel>Choose Category *</FormLabel>
               <FormDescription className="font-normal text-muted text-[12px]">
@@ -142,7 +142,7 @@ export function ArticleForm() {
         <FormField
           control={form.control}
           name="tags"
-          render={({ field }) => (
+          render={() => (
             <FormItem>
               <FormLabel>Article Tags*</FormLabel>
               <FormDescription className="font-normal text-muted text-[12px]">

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
+ 
   FormField,
   FormItem,
   FormLabel,
@@ -14,9 +14,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-import { Lock, Mail, User } from "lucide-react";
 
-import { useNavigate } from "react-router-dom";
+
 
 const FormSchema = z
   .object({
@@ -33,7 +32,7 @@ const FormSchema = z
   });
 
 export function ChangePasswordForm() {
-  const navigate = useNavigate();
+ 
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -44,7 +43,9 @@ export function ChangePasswordForm() {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof FormSchema>) => {};
+  const onSubmit = async (values: z.infer<typeof FormSchema>) => {
+    console.log(values);
+  };
 
   return (
     <Form {...form}>

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -14,7 +13,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Lock, Mail } from "lucide-react";
 
 const FormSchema = z.object({
   username: z.string().min(2, {
@@ -37,7 +35,9 @@ export function AboutForm() {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof FormSchema>) => {};
+  const onSubmit = async (values: z.infer<typeof FormSchema>) => {
+    console.log(values);
+  };
 
   return (
     <Form {...form}>
