@@ -63,7 +63,7 @@ export function LoginForm() {
                   <Input
                     type="username"
                     placeholder="Enter your email"
-                    className="h-10 border-none focus:ring-0 "
+                    className="h-10 border-none focus:ring-0 focus-visible:ring-offset-0 "
                     {...field}
                   />
                 </div>
