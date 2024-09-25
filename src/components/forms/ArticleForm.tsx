@@ -23,11 +23,13 @@ import {
 import { RichTextEditor } from "../RichTextEditor";
 import { CreateBlog } from "@/lib/routes";
 import { toast } from "sonner";
+import JoditEditor from "jodit-react";
+
 
 const FormSchema = z.object({
   title: z.string().min(1, { message: "Field is required" }),
   body: z.string().min(1, { message: "Field is required" }),
-  coverImage: z.any(), // Accept any file type for cover image
+  coverImage: z.any(),
   category: z.string().min(1, { message: "Field is required" }),
   tags: z.string().min(1, { message: "Field is required" }),
   sumary: z.string().min(1, { message: "Field is required" }),
@@ -35,6 +37,7 @@ const FormSchema = z.object({
 
 export function ArticleForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [content, setContent] = useState("Worlds best html page");
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -47,6 +50,9 @@ export function ArticleForm() {
       body: "",
     },
   });
+  const handleChange = (value: string) => {
+    setContent(value);
+  };
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     setIsSubmitting(true);
@@ -71,7 +77,7 @@ export function ArticleForm() {
           className:
             "border border-primary text-center text-base flex justify-center rounded-lg mb-2",
         });
-        form.reset(); 
+        form.reset();
       } else {
         throw new Error("Failed to create blog");
       }
@@ -113,7 +119,6 @@ export function ArticleForm() {
           )}
         />
 
-        {/* Summary Field */}
         <FormField
           control={form.control}
           name="sumary"
@@ -146,14 +151,19 @@ export function ArticleForm() {
                 Main body of your article.
               </FormDescription>
               <FormControl>
-              <RichTextEditor value={field.value} onChange={field.onChange} />
+                <JoditEditor
+                  ref={editor} 
+                  value={content} 
+                  config={config} 
+                  onChange={handleChange} 
+                  className="w-full h-[70%] mt-10 bg-white"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        
         <FormField
           control={form.control}
           name="category"
