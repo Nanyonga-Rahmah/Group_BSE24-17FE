@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -13,7 +13,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
 import {
   Select,
   SelectContent,
@@ -22,40 +21,69 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { RichTextEditor } from "../RichTextEditor";
+import { CreateBlog } from "@/lib/routes";
+import { toast } from "sonner";
 
 const FormSchema = z.object({
   title: z.string().min(1, { message: "Field is required" }),
-  description: z.string().min(1, { message: "Field is required" }),
-
-  image: z.string().min(1, { message: "Field is required" }),
-
-  category: z.string().min(1, { message: "Field is required " }),
-
-  tags: z.string().min(1, { message: "Field is required " }),
-
-  sumary: z.string().min(1, { message: "Field is required " }),
+  body: z.string().min(1, { message: "Field is required" }),
+  coverImage: z.any(), // Accept any file type for cover image
+  category: z.string().min(1, { message: "Field is required" }),
+  tags: z.string().min(1, { message: "Field is required" }),
+  sumary: z.string().min(1, { message: "Field is required" }),
 });
 
 export function ArticleForm() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       title: "",
-
-      image: "",
-
+      coverImage: null,
       category: "",
-
       sumary: "",
       tags: "",
-
-      description: "",
+      body: "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof FormSchema>) {
-    console.log("values submitted", values);
-  }
+  const onSubmit = async (values: z.infer<typeof FormSchema>) => {
+    setIsSubmitting(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("title", values.title);
+      formData.append("body", values.body);
+      formData.append("category", values.category);
+      formData.append("tags", values.tags);
+      formData.append("sumary", values.sumary);
+      formData.append("coverImage", values.coverImage[0]);
+
+      const response = await fetch(CreateBlog, {
+        method: "POST",
+        body: formData,
+      });
+      console.log(response);
+
+      if (response.status === 200) {
+        toast("Blog created successfully!", {
+          className:
+            "border border-primary text-center text-base flex justify-center rounded-lg mb-2",
+        });
+        form.reset(); 
+      } else {
+        throw new Error("Failed to create blog");
+      }
+    } catch (error) {
+      toast("Failed to create blog", {
+        className:
+          "border border-error text-center text-base flex justify-center rounded-lg mb-2",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <Form {...form}>
@@ -70,16 +98,22 @@ export function ArticleForm() {
             <FormItem className="col-span-1">
               <FormLabel>Article Title *</FormLabel>
               <FormDescription className="font-normal text-muted text-[12px]">
-                A compelling title that captures the essence of your article
-                between 5-10 characters
+                A compelling title that captures the essence of your article.
               </FormDescription>
               <FormControl>
-                <Input type="text" placeholder="" className="h-9 " {...field} />
+                <Input
+                  type="text"
+                  placeholder="Enter title"
+                  className="h-9 "
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
+        {/* Summary Field */}
         <FormField
           control={form.control}
           name="sumary"
@@ -90,7 +124,12 @@ export function ArticleForm() {
                 100 Characters
               </FormDescription>
               <FormControl>
-                <Input type="text" placeholder="" className="h-9 " {...field} />
+                <Input
+                  type="text"
+                  placeholder="Enter summary"
+                  className="h-9 "
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -99,38 +138,40 @@ export function ArticleForm() {
 
         <FormField
           control={form.control}
-          name="description"
-          render={() => (
+          name="body"
+          render={({ field }) => (
             <FormItem className="col-span-1">
               <FormLabel>Article Body *</FormLabel>
               <FormDescription className="font-normal text-muted text-[12px]">
-                Main body of your article
+                Main body of your article.
               </FormDescription>
               <FormControl>
-                <RichTextEditor />
+              <RichTextEditor value={field.value} onChange={field.onChange} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
+        
         <FormField
           control={form.control}
           name="category"
-          render={() => (
+          render={({ field }) => (
             <FormItem className="col-span-1">
               <FormLabel>Choose Category *</FormLabel>
               <FormDescription className="font-normal text-muted text-[12px]">
                 Select the category that best fits your article.
               </FormDescription>
               <FormControl>
-                <Select>
+                <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger>
-                    <SelectValue />
+                    <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="light">Education</SelectItem>
-                    <SelectItem value="dark">Business</SelectItem>
-                    <SelectItem value="system">Marketing</SelectItem>
+                    <SelectItem value="Education">Education</SelectItem>
+                    <SelectItem value="Business">Business</SelectItem>
+                    <SelectItem value="Marketing">Marketing</SelectItem>
                   </SelectContent>
                 </Select>
               </FormControl>
@@ -142,21 +183,21 @@ export function ArticleForm() {
         <FormField
           control={form.control}
           name="tags"
-          render={() => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>Article Tags*</FormLabel>
               <FormDescription className="font-normal text-muted text-[12px]">
-                Add relevant tags that describe your article upto 5 tags
+                Add relevant tags that describe your article (up to 5 tags).
               </FormDescription>
               <FormControl>
-                <Select>
+                <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger>
-                    <SelectValue />
+                    <SelectValue placeholder="Select tags" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="light">Health</SelectItem>
-                    <SelectItem value="dark">Technology</SelectItem>
-                    <SelectItem value="system">Blogging</SelectItem>
+                    <SelectItem value="Health">Health</SelectItem>
+                    <SelectItem value="Technology">Technology</SelectItem>
+                    <SelectItem value="Blogging">Blogging</SelectItem>
                   </SelectContent>
                 </Select>
               </FormControl>
@@ -167,16 +208,20 @@ export function ArticleForm() {
 
         <FormField
           control={form.control}
-          name="image"
+          name="coverImage"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Upload Cover Image*</FormLabel>
               <FormDescription className="font-normal text-muted text-[12px]">
-                Upload an image (jpg, png) that represents your article
+                Upload a cover image (jpg, png) that represents your article
                 (1120x386px).
               </FormDescription>
               <FormControl>
-                <Input type="file" placeholder="" className="h-9 " {...field} />
+                <Input
+                  type="file"
+                  className="h-9"
+                  onChange={(e) => field.onChange(e.target.files)}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -185,9 +230,10 @@ export function ArticleForm() {
 
         <Button
           type="submit"
-          className=" font-semibold  text-[15px] border border-primary text-black w-full  "
+          className="font-semibold text-[15px] border border-primary text-black w-full"
+          disabled={isSubmitting}
         >
-          Publish Article
+          {isSubmitting ? "Publishing..." : "Publish Article"}
         </Button>
       </form>
     </Form>
