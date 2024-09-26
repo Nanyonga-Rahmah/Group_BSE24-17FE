@@ -24,7 +24,7 @@ import { CreateBlog } from "@/lib/routes";
 import { toast } from "sonner";
 import JoditEditor from "jodit-react";
 
-const options = [
+export const options = [
   "bold",
   "italic",
   "|",
@@ -80,7 +80,7 @@ export function ArticleForm() {
     },
   });
 
-  const config = useMemo(
+   const config = useMemo(
     () => ({
       readonly: false,
       buttons: options,
@@ -176,7 +176,7 @@ export function ArticleForm() {
           )}
         />
 
-        {/* Rich Text Editor for Body */}
+        
         <FormItem className="col-span-1">
           <FormLabel>Article Body *</FormLabel>
           <FormDescription className="font-normal text-muted text-[12px]">
@@ -189,10 +189,10 @@ export function ArticleForm() {
               render={({ field }) => (
                 <JoditEditor
                   ref={editor}
-                  value={field.value} // Bind editor value to form value
+                  value={field.value}
                   config={config}
-                  onBlur={(newContent) => field.onChange(newContent)} // Update form state on blur
-                  onChange={(htmlString) => field.onChange(htmlString)} // Update form state on change
+                  onBlur={(newContent) => field.onChange(newContent)} 
+                  onChange={(htmlString) => field.onChange(htmlString)} 
                   className="w-full h-[70%] mt-10 bg-white"
                 />
               )}
