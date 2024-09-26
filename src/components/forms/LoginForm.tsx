@@ -38,13 +38,16 @@ export function LoginForm() {
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {
-      const response = await fetch("http://localhost:4040/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values), // Send the form values (username and password)
-      });
+      const response = await fetch(
+        "https://group-bse24-17be.onrender.com/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values), // Send the form values (username and password)
+        }
+      );
 
       const data = await response.json();
 

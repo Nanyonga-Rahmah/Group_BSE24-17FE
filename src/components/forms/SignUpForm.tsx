@@ -61,10 +61,13 @@ export function SignupForm() {
     }
 
     try {
-      const response = await fetch("http://localhost:4040/register", {
-        method: "POST",
-        body: formData, // Send the form data with the file
-      });
+      const response = await fetch(
+        "https://group-bse24-17be.onrender.com/register",
+        {
+          method: "POST",
+          body: formData, // Send the form data with the file
+        }
+      );
 
       const data = await response.json();
 
