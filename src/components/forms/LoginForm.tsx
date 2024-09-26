@@ -15,13 +15,14 @@ import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
 import { Lock, Mail } from "lucide-react";
 
+// Validation schema using Zod
 const FormSchema = z.object({
-  username: z.string().min(2, {
-    message: "username must be at least 2 characters.",
+  email: z.string().min(2, {
+    message: "Username must be at least 2 characters.",
   }),
   password: z
     .string()
-    .min(2, { message: "password must be at least 2 characters." }),
+    .min(2, { message: "Password must be at least 2 characters." }),
 });
 
 export function LoginForm() {
@@ -30,18 +31,38 @@ export function LoginForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
     },
   });
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
-    console.log(values);
-    localStorage.setItem("IsLoggedIn", "true");
-    setTimeout(() => {
-      navigate("/");
-      window.location.reload();
-    }, 2000);
+    try {
+      const response = await fetch("http://localhost:4040/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values), // Send the form values (username and password)
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Store authentication state
+        localStorage.setItem("IsLoggedIn", "true");
+        localStorage.setItem("user", JSON.stringify(data.user)); // Store user data if needed
+
+        // Redirect to home or dashboard page after successful login
+        navigate("/");
+        window.location.reload();
+      } else {
+        // Handle login failure
+        console.error("Login failed:", data.message);
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+    }
   };
 
   return (
@@ -49,7 +70,7 @@ export function LoginForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-4">
         <FormField
           control={form.control}
-          name="username"
+          name="email"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="font-medium text-base">Email</FormLabel>
@@ -60,9 +81,9 @@ export function LoginForm() {
                     <Mail className="h-4 w-4" />
                   </span>
                   <Input
-                    type="username"
+                    type="email"
                     placeholder="Enter your email"
-                    className="h-10 border-none focus:ring-0 focus-visible:ring-offset-0 "
+                    className="h-10 border-none focus:ring-0 focus-visible:ring-offset-0"
                     {...field}
                   />
                 </div>
@@ -76,28 +97,27 @@ export function LoginForm() {
           name="password"
           render={({ field }) => (
             <FormItem className="my-4">
-              <FormLabel className="font-medium text-base ">Password</FormLabel>
+              <FormLabel className="font-medium text-base">Password</FormLabel>
               <FormControl>
-                <div className=" border flex items-center pr-4 rounded-[10px] px-2 ">
+                <div className="border flex items-center pr-4 rounded-[10px] px-2">
                   <span>
                     <Lock className="h-4 w-4" />
                   </span>
                   <Input
                     type="password"
-                    placeholder="password"
-                    className="border-none focus-visible:ring-0 focus-visible:ring-offset-0  "
+                    placeholder="Enter your password"
+                    className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
                     {...field}
                   />
                 </div>
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
         />
-        <div className="flex justify-end  ">
-          <Link to="/forgot-password " className="text-sm">
-            Forgot Password
+        <div className="flex justify-end">
+          <Link to="/forgot-password" className="text-sm">
+            Forgot Password?
           </Link>
         </div>
         <Button
