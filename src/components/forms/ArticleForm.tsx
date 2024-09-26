@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
-import { useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -20,11 +20,36 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { RichTextEditor } from "../RichTextEditor";
 import { CreateBlog } from "@/lib/routes";
 import { toast } from "sonner";
 import JoditEditor from "jodit-react";
 
+const options = [
+  "bold",
+  "italic",
+  "|",
+  "ul",
+  "ol",
+  "image",
+  "|",
+  "font",
+  "fontsize",
+  "|",
+  "outdent",
+  "indent",
+  "align",
+  "|",
+  "hr",
+  "|",
+  "fullsize",
+  "brush",
+  "|",
+  "table",
+  "link",
+  "|",
+  "undo",
+  "redo",
+];
 
 const FormSchema = z.object({
   title: z.string().min(1, { message: "Field is required" }),
@@ -33,11 +58,14 @@ const FormSchema = z.object({
   category: z.string().min(1, { message: "Field is required" }),
   tags: z.string().min(1, { message: "Field is required" }),
   sumary: z.string().min(1, { message: "Field is required" }),
+  author: z.string().min(1, { message: "Field is required" }),
 });
 
 export function ArticleForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [content, setContent] = useState("Worlds best html page");
+  const editor = useRef(null);
+  const author = localStorage.getItem("authorId") || "66f4832e698a50dde97f5896";
+  console.log(author);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -48,29 +76,36 @@ export function ArticleForm() {
       sumary: "",
       tags: "",
       body: "",
+      author: author,
     },
   });
-  const handleChange = (value: string) => {
-    setContent(value);
-  };
+
+  const config = useMemo(
+    () => ({
+      readonly: false,
+      buttons: options,
+      buttonsMD: options,
+      buttonsSM: options,
+      buttonsXS: options,
+      statusbar: false,
+      toolbarAdaptive: false,
+      toolbarSticky: true,
+      allowEmptyTags: false,
+    }),
+    []
+  );
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     setIsSubmitting(true);
 
     try {
-      const formData = new FormData();
-      formData.append("title", values.title);
-      formData.append("body", values.body);
-      formData.append("category", values.category);
-      formData.append("tags", values.tags);
-      formData.append("sumary", values.sumary);
-      formData.append("coverImage", values.coverImage[0]);
-
       const response = await fetch(CreateBlog, {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: JSON.stringify(values),
       });
-      console.log(response);
+
+      console.log(values);
 
       if (response.status === 200) {
         toast("Blog created successfully!", {
@@ -141,28 +176,30 @@ export function ArticleForm() {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="body"
-          render={({ field }) => (
-            <FormItem className="col-span-1">
-              <FormLabel>Article Body *</FormLabel>
-              <FormDescription className="font-normal text-muted text-[12px]">
-                Main body of your article.
-              </FormDescription>
-              <FormControl>
+        {/* Rich Text Editor for Body */}
+        <FormItem className="col-span-1">
+          <FormLabel>Article Body *</FormLabel>
+          <FormDescription className="font-normal text-muted text-[12px]">
+            Main body of your article.
+          </FormDescription>
+          <FormControl>
+            <Controller
+              control={form.control}
+              name="body"
+              render={({ field }) => (
                 <JoditEditor
-                  ref={editor} 
-                  value={content} 
-                  config={config} 
-                  onChange={handleChange} 
+                  ref={editor}
+                  value={field.value} // Bind editor value to form value
+                  config={config}
+                  onBlur={(newContent) => field.onChange(newContent)} // Update form state on blur
+                  onChange={(htmlString) => field.onChange(htmlString)} // Update form state on change
                   className="w-full h-[70%] mt-10 bg-white"
                 />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+              )}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
 
         <FormField
           control={form.control}
@@ -179,7 +216,7 @@ export function ArticleForm() {
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Education">Education</SelectItem>
+                    <SelectItem value="Agriculture">Agriculture</SelectItem>
                     <SelectItem value="Business">Business</SelectItem>
                     <SelectItem value="Marketing">Marketing</SelectItem>
                   </SelectContent>
