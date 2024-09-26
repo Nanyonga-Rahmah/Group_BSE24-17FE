@@ -14,8 +14,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
 import { Lock, Mail } from "lucide-react";
+import { Login } from "@/lib/routes";
 
-// Validation schema using Zod
 const FormSchema = z.object({
   email: z.string().min(2, {
     message: "Username must be at least 2 characters.",
@@ -38,29 +38,24 @@ export function LoginForm() {
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {
-      const response = await fetch(
-        "https://group-bse24-17be.onrender.com/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(values), // Send the form values (username and password)
-        }
-      );
+      const response = await fetch(Login, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+      console.log(response);
 
       const data = await response.json();
 
       if (response.ok) {
-        // Store authentication state
         localStorage.setItem("IsLoggedIn", "true");
-        localStorage.setItem("user", JSON.stringify(data.user)); // Store user data if needed
+        localStorage.setItem("user", JSON.stringify(data.user));
 
-        // Redirect to home or dashboard page after successful login
         navigate("/");
         window.location.reload();
       } else {
-        // Handle login failure
         console.error("Login failed:", data.message);
       }
     } catch (error) {

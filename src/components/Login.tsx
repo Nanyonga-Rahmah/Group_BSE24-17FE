@@ -60,7 +60,7 @@ export function LoginDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="h-10 w-[104px] rounded-[60px] text-black">
+        <Button className="h-10  w-[104px] rounded-[60px] text-black">
           Login
         </Button>
       </DialogTrigger>
