@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm,Controller } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -21,14 +21,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { RichTextEditor } from "../RichTextEditor";
 
 import { IActionProps } from "../Actions";
-;
-
+import JoditEditor from "jodit-react";
+import { useMemo, useRef } from "react";
+import { options } from "./ArticleForm";
 const FormSchema = z.object({
   title: z.string().min(1, { message: "Field is required" }),
-  description: z.string().min(1, { message: "Field is required" }),
+  body: z.string().min(1, { message: "Field is required" }),
 
   image: z.string().min(1, { message: "Field is required" }),
 
@@ -40,7 +40,8 @@ const FormSchema = z.object({
 });
 
 export function ArticleForm({ post }: IActionProps) {
-    console.log(post);
+  const editor = useRef(null);
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -53,9 +54,23 @@ export function ArticleForm({ post }: IActionProps) {
       sumary: post?.description,
       tags: post?.tags,
 
-      description: "",
+      body: "",
     },
   });
+  const config = useMemo(
+    () => ({
+      readonly: false,
+      buttons: options,
+      buttonsMD: options,
+      buttonsSM: options,
+      buttonsXS: options,
+      statusbar: false,
+      toolbarAdaptive: false,
+      toolbarSticky: true,
+      allowEmptyTags: false,
+    }),
+    []
+  );
 
   function onSubmit(values: z.infer<typeof FormSchema>) {
     console.log("values submitted", values);
@@ -101,22 +116,31 @@ export function ArticleForm({ post }: IActionProps) {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="description"
-          render={() => (
+        
             <FormItem className="col-span-1">
               <FormLabel>Article Body *</FormLabel>
               <FormDescription className="font-normal text-muted text-[12px]">
                 Main body of your article
               </FormDescription>
               <FormControl>
-                <RichTextEditor />
+                <Controller
+                  control={form.control}
+                  name="body"
+                  render={({ field }) => (
+                    <JoditEditor
+                      ref={editor}
+                      value={field.value}
+                      config={config}
+                      onBlur={(newContent) => field.onChange(newContent)}
+                      onChange={(htmlString) => field.onChange(htmlString)}
+                      className="w-full h-[70%] mt-10 bg-white"
+                    />
+                  )}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
-          )}
-        />
+        
         <FormField
           control={form.control}
           name="category"
