@@ -44,6 +44,7 @@ export function LoginForm() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(values),
+        credentials: "include",
       });
       console.log(response);
 
