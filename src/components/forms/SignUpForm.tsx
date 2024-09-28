@@ -68,16 +68,15 @@ export function SignupForm() {
       const response = await fetch(Register, {
         method: "POST",
         body: formData,
+        credentials: "include",
       });
 
       const data = await response.json();
 
       if (response.status === 200) {
-
         toast("User registered successfully!");
 
         setTimeout(() => {
-
           window.location.reload();
           navigate("/");
         }, 2000);

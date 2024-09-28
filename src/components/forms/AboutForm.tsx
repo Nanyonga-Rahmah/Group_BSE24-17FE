@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -13,7 +12,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
+import { ProfileUpdate } from "@/lib/routes";
 
 const FormSchema = z.object({
   username: z.string().min(2, {
@@ -30,11 +30,35 @@ export function AboutForm() {
   const [profilePic, setProfilePic] = useState("/images/avatar.png");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      username: "",
+      email: "",
+      info: "",
+    },
+  });
+
+  // Load user data from local storage when the component mounts
+  useEffect(() => {
+    const userData = localStorage.getItem("user"); // Assuming the user data is stored with key "user"
+    if (userData) {
+      const user = JSON.parse(userData);
+      form.reset({
+        username: user.username,
+        email: user.email,
+        info: "", // Add additional user info if available
+      });
+      setProfilePic(user.profilePicture || "/images/avatar.png"); // Set profile picture if exists
+    }
+  }, [form]);
+
   const handleButtonClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
   };
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -48,24 +72,45 @@ export function AboutForm() {
     }
   };
 
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-    defaultValues: {
-      username: "",
-      email: "",
-      info: "",
-    },
-  });
-
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
-    console.log(values);
+    try {
+      // Prepare the form data
+      const formData = new FormData();
+      formData.append("username", values.username);
+      formData.append("email", values.email);
+      formData.append("info", values.info);
+
+      // Append the profile picture if available
+      const fileInput = fileInputRef.current;
+      if (fileInput && fileInput.files?.[0]) {
+        formData.append("profilePicture", fileInput.files[0]);
+      }
+
+      // Send a POST request to the API
+      const response = await fetch(ProfileUpdate, {
+        method: "PUT",
+        body: formData,
+        credentials: "include", // Include credentials for authentication
+      });
+
+      // Handle the response
+      const data = await response.json();
+      if (response.ok) {
+        console.log("Profile updated successfully:", data);
+        // You can show a success message or redirect
+      } else {
+        console.error("Profile update failed:", data);
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
   };
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="md:w-[30vw] p-4   space-y-6"
+        className="md:w-[30vw] p-4 space-y-6"
       >
         <div className="flex flex-col space-y-2">
           <h3>Photo</h3>

@@ -80,7 +80,7 @@ export function ArticleForm() {
     },
   });
 
-   const config = useMemo(
+  const config = useMemo(
     () => ({
       readonly: false,
       buttons: options,
@@ -98,26 +98,41 @@ export function ArticleForm() {
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     setIsSubmitting(true);
 
+    const formData = new FormData();
+    formData.append("title", values.title);
+    formData.append("summary", values.sumary);
+    formData.append("body", values.body);
+    formData.append("category", values.category);
+    formData.append("tags", values.tags);
+    formData.append("author", values.author);
+
+    if (values.coverImage && values.coverImage[0]) {
+      formData.append("coverImage", values.coverImage[0]);
+    }
+    // Log form data to console
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
+
     try {
       const response = await fetch(CreateBlog, {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: JSON.stringify(values),
+        credentials: "include", // Send session cookies along with the request
+        body: formData,
       });
 
-      console.log(values);
-
-      if (response.status === 200) {
+      if (response.status === 201) {
         toast("Blog created successfully!", {
           className:
             "border border-primary text-center text-base flex justify-center rounded-lg mb-2",
         });
         form.reset();
       } else {
-        throw new Error("Failed to create blog");
+        const error = await response.json();
+        throw new Error(error.message || "Failed to create blog");
       }
     } catch (error) {
-      toast("Failed to create blog", {
+      toast(`Failed to create blog: ${(error as Error).message}`, {
         className:
           "border border-error text-center text-base flex justify-center rounded-lg mb-2",
       });
@@ -176,7 +191,6 @@ export function ArticleForm() {
           )}
         />
 
-        
         <FormItem className="col-span-1">
           <FormLabel>Article Body *</FormLabel>
           <FormDescription className="font-normal text-muted text-[12px]">
@@ -191,8 +205,8 @@ export function ArticleForm() {
                   ref={editor}
                   value={field.value}
                   config={config}
-                  onBlur={(newContent) => field.onChange(newContent)} 
-                  onChange={(htmlString) => field.onChange(htmlString)} 
+                  onBlur={(newContent) => field.onChange(newContent)}
+                  onChange={(htmlString) => field.onChange(htmlString)}
                   className="w-full h-[70%] mt-10 bg-white"
                 />
               )}
@@ -267,7 +281,7 @@ export function ArticleForm() {
                 <Input
                   type="file"
                   className="h-9"
-                  onChange={(e) => field.onChange(e.target.files)}
+                  onChange={(e) => field.onChange(e.target.files)} // Store selected file in field
                 />
               </FormControl>
               <FormMessage />
