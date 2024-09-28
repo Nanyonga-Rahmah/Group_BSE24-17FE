@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -12,13 +11,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { PasswordUpdate } from "@/lib/routes";
 
 const FormSchema = z
   .object({
     currentpassword: z.string().min(2, {
       message: "Field is required.",
     }),
-
     newpassword: z.string().min(2, { message: "Field is required" }),
     confirmPassword: z.string().min(2, { message: "Field is required" }),
   })
@@ -32,20 +31,45 @@ export function ChangePasswordForm() {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       currentpassword: "",
-
       newpassword: "",
+      confirmPassword: "",
     },
   });
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
-    console.log(values);
+    const { currentpassword, newpassword } = values;
+
+    try {
+      const response = await fetch(PasswordUpdate, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          oldPassword: currentpassword,
+          newPassword: newpassword,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Error changing password");
+      }
+
+      const data = await response.json();
+      alert(data.message); // Display success message
+    } catch (error) {
+      const errorMessage = (error as Error).message;
+      alert(errorMessage); // Display error message
+    }
   };
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="md:w-[30vw]  p-4   space-y-6"
+        className="md:w-[30vw] p-4 space-y-6"
       >
         <FormField
           control={form.control}
@@ -57,11 +81,10 @@ export function ChangePasswordForm() {
                 <Input
                   type="password"
                   placeholder="*******"
-                  className=" focus-visible:ring-0 focus-visible:ring-offset-0  "
+                  className="focus-visible:ring-0 focus-visible:ring-offset-0"
                   {...field}
                 />
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
@@ -77,15 +100,15 @@ export function ChangePasswordForm() {
                 <Input
                   type="password"
                   placeholder="******"
-                  className=" focus-visible:ring-0 focus-visible:ring-offset-0  "
+                  className="focus-visible:ring-0 focus-visible:ring-offset-0"
                   {...field}
                 />
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="confirmPassword"
@@ -96,18 +119,17 @@ export function ChangePasswordForm() {
                 <Input
                   type="password"
                   placeholder="********"
-                  className="  focus-visible:ring-0 focus-visible:ring-offset-0  "
+                  className="focus-visible:ring-0 focus-visible:ring-offset-0"
                   {...field}
                 />
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
         />
 
         <Button type="submit" className="w-full text-black">
-          UpDate
+          Update
         </Button>
       </form>
     </Form>
