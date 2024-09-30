@@ -5,7 +5,7 @@ import Hero from "@/components/Hero";
 import Post from "@/components/Posts"; // Ensure this import is correct
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-// Define the post interface to type the post data
+// Define the post interface to type the post data, including the author's profile picture
 export interface IPost {
   title: string;
   description: string;
@@ -14,6 +14,7 @@ export interface IPost {
   imgUrl: string;
   aboutPostUrl: string;
   tags: string[];
+  authorProfilePicture: string;
 }
 
 function LandingPage({ status }: IStatus) {
@@ -40,6 +41,9 @@ function LandingPage({ status }: IStatus) {
             : "/images/default-cover.png", // Adjust the base URL as necessary
           aboutPostUrl: post.coverImage || "/images/default-cover.png",
           tags: post.tags,
+          authorProfilePicture: post.author.profilePicture
+            ? `http://localhost:4040/${post.author.profilePicture}`
+            : "/images/default-avatar.png", // Adjust the default image as necessary
         }));
         setPosts(formattedPosts);
         setLoading(false);
