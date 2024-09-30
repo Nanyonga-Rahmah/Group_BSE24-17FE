@@ -9,26 +9,28 @@ export interface IPost {
   description: string;
   postedBy: string;
   date: string;
-  imgUrl: string;
+  imgUrl: string; // Use imgUrl for images
   aboutPostUrl: string;
   tags: string[];
 }
+
 export interface IPosts {
   posts: IPost[];
-  post?: IPost;
 }
 
-function Post({ posts }: IPosts) {
+function Posts({ posts }: IPosts) {
+  // Renaming from Post to Posts
   const location = useLocation();
   const { pathname } = location;
+
   return (
     <>
-      <div className="flex flex-col  md:grid md:grid-cols-3 gap-10 md:mt-4 md:px-16">
+      <div className="flex flex-col md:grid md:grid-cols-3 gap-10 md:mt-4 md:px-16">
         {pathname === "/" && <LatestPost />}
         {posts.map((post, index) => (
           <div key={index} className="flex flex-col gap-2">
             <div className="grow">
-              <img src={post.aboutPostUrl} alt="About" />
+              <img src={post.imgUrl} alt={post.title} /> {/* Using imgUrl */}
             </div>
             <div className="flex gap-3">
               {post.tags?.map((tag, index) => (
@@ -46,17 +48,20 @@ function Post({ posts }: IPosts) {
             <div
               className={`${
                 pathname === "/my-articles"
-                  ? " flex justify-between"
-                  : "flex gap-3 "
+                  ? "flex justify-between"
+                  : "flex gap-3"
               }`}
             >
               {pathname === "/" && (
                 <div className="w-[11%]">
-                  <img src={post.imgUrl} alt={post.postedBy} />
+                  <img src={post.imgUrl} alt={post.postedBy} />{" "}
+                  {/* Same imgUrl */}
                 </div>
               )}
               <div>
-                {pathname === "/" && <p className="text-[12px]">{post.postedBy}</p>}
+                {pathname === "/" && (
+                  <p className="text-[12px]">{post.postedBy}</p>
+                )}
                 <p className="text-muted text-[11px]">{post.date}</p>
               </div>
 
@@ -77,4 +82,4 @@ function Post({ posts }: IPosts) {
   );
 }
 
-export default Post;
+export default Posts;

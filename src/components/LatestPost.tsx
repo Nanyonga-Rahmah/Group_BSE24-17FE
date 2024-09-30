@@ -19,7 +19,10 @@ function LatestPost() {
     navigate("/article-page");
   };
   return (
-    <div className="flex flex-col md:flex-row md:gap-20 md:col-span-3 my-10 " onClick={HandleClick}>
+    <div
+      className="flex flex-col md:flex-row md:gap-20 md:col-span-3 my-10 "
+      onClick={HandleClick}
+    >
       <div>
         <img src={latestPost.aboutPostUrl} alt="Latest" />
       </div>
