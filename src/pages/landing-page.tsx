@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import Footer from "@/components/Footer";
 import Header, { IStatus } from "@/components/Header";
 import Hero from "@/components/Hero";
-import Posts from "@/components/Posts"; // Ensure this import is correct
+import Post from "@/components/Posts"; // Ensure this import is correct
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+// Define the post interface to type the post data
 export interface IPost {
   title: string;
   description: string;
@@ -32,9 +33,11 @@ function LandingPage({ status }: IStatus) {
         const formattedPosts = data.map((post: any) => ({
           title: post.title,
           description: post.summary,
-          postedBy: post.author.name,
+          postedBy: post.author.username,
           date: new Date(post.createdAt).toLocaleDateString(),
-          imgUrl: "/images/avatar.png", // Placeholder, adjust accordingly
+          imgUrl: post.coverImage
+            ? `http://localhost:4040/${post.coverImage}`
+            : "/images/default-cover.png", // Adjust the base URL as necessary
           aboutPostUrl: post.coverImage || "/images/default-cover.png",
           tags: post.tags,
         }));
@@ -73,30 +76,30 @@ function LandingPage({ status }: IStatus) {
               <TabsTrigger value="health">Health</TabsTrigger>
             </TabsList>
             <TabsContent value="all">
-              <Posts posts={posts} />
+              <Post posts={posts} />
             </TabsContent>
             <TabsContent value="marketing">
-              <Posts
+              <Post
                 posts={posts.filter((post) => post.tags.includes("Marketing"))}
               />
             </TabsContent>
             <TabsContent value="social">
-              <Posts
+              <Post
                 posts={posts.filter((post) => post.tags.includes("Social"))}
               />
             </TabsContent>
             <TabsContent value="technology">
-              <Posts
+              <Post
                 posts={posts.filter((post) => post.tags.includes("Technology"))}
               />
             </TabsContent>
             <TabsContent value="health">
-              <Posts
+              <Post
                 posts={posts.filter((post) => post.tags.includes("Health"))}
               />
             </TabsContent>
             <TabsContent value="business">
-              <Posts
+              <Post
                 posts={posts.filter((post) => post.tags.includes("Business"))}
               />
             </TabsContent>

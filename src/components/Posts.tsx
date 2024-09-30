@@ -9,7 +9,7 @@ export interface IPost {
   description: string;
   postedBy: string;
   date: string;
-  imgUrl: string; // Use imgUrl for images
+  imgUrl: string;
   aboutPostUrl: string;
   tags: string[];
 }
