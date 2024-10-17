@@ -9,16 +9,19 @@ import { Link } from "react-router-dom";
 import { IPost } from "./Posts";
 export interface IActionProps {
   post?: IPost;
+  onDeleteSuccess?: () => void; // Add this prop
 }
 
-export function Actions({ post }: IActionProps) {
+export function Actions({ post, onDeleteSuccess }: IActionProps) {
+  console.log("Post object in Actions:", post);
+
   return (
     <Popover>
       <PopoverTrigger asChild>
         <img src="/icons/actions.svg" alt="Actions" className="relative" />
       </PopoverTrigger>
       <PopoverContent className="w-36 flex flex-col gap-2 absolute font-normal text-[13px] -top-36 -left-40  ">
-        <Link to="/view-article" state={{ post }}>
+        <Link to="/view-article" state={{ Post: post }}>
           <div className="flex items-center gap-2">
             <span>
               <EyeIcon className="h-4 w-4" />
@@ -33,7 +36,7 @@ export function Actions({ post }: IActionProps) {
 
           <span>Edit</span>
         </div>
-        <DeleteDialog />
+        <DeleteDialog postId={post?._id} onDeleteSuccess={onDeleteSuccess} />
       </PopoverContent>
     </Popover>
   );

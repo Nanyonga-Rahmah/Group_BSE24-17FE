@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm,Controller } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -24,63 +24,87 @@ import {
 
 import { IActionProps } from "../Actions";
 import JoditEditor from "jodit-react";
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import { options } from "./ArticleForm";
+import { DeleteArticle } from "@/lib/routes";
+
 const FormSchema = z.object({
   title: z.string().min(1, { message: "Field is required" }),
   body: z.string().min(1, { message: "Field is required" }),
-
-  image: z.string().min(1, { message: "Field is required" }),
-
+  coverImage: z.any(),
   category: z.array(z.string()).min(1, { message: "Field is required " }),
-
   tags: z.array(z.string()).min(1, { message: "At least one tag is required" }),
-
-  sumary: z.string().min(1, { message: "Field is required " }),
+  summary: z.string().min(1, { message: "Field is required " }),
 });
 
 export function ArticleForm({ post }: IActionProps) {
   const editor = useRef(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       title: post?.title,
-
-      image: post?.aboutPostUrl,
-
+      coverImage: post?.coverImage,
       category: post?.tags,
-
-      sumary: post?.description,
+      summary: post?.description,
       tags: post?.tags,
-
-      body: "",
+      body: post?.body || "",
     },
   });
+
   const config = useMemo(
     () => ({
       readonly: false,
       buttons: options,
-      buttonsMD: options,
-      buttonsSM: options,
-      buttonsXS: options,
       statusbar: false,
-      toolbarAdaptive: false,
       toolbarSticky: true,
-      allowEmptyTags: false,
     }),
     []
   );
 
-  function onSubmit(values: z.infer<typeof FormSchema>) {
-    console.log("values submitted", values);
-  }
+  const onSubmit = async (values: z.infer<typeof FormSchema>) => {
+    setIsLoading(true);
+    const blogId = post?._id; // Assuming the post has an `_id` field
+
+    try {
+      // Create FormData to handle file upload
+      const formData = new FormData();
+      formData.append("title", values.title);
+      formData.append("summary", values.summary);
+      formData.append("body", values.body);
+      formData.append("category", values.category.join(","));
+      formData.append("tags", values.tags.join(","));
+      formData.append("coverImage", values.coverImage[0]);
+
+      // Send a PUT request to update the blog
+      const response = await fetch(`${DeleteArticle}/${blogId}`, {
+        method: "PUT",
+        body: formData,
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        const updatedBlog = await response.json();
+        console.log("Blog updated successfully", updatedBlog);
+        // Handle success (e.g., redirect or show a success message)
+      } else {
+        const errorData = await response.json();
+        console.error("Error updating blog:", errorData);
+        // Handle error (e.g., show error message)
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="md:w-[40vw] space-y-4 "
+        className="md:w-[40vw] space-y-4"
       >
         <FormField
           control={form.control}
@@ -89,19 +113,19 @@ export function ArticleForm({ post }: IActionProps) {
             <FormItem className="col-span-1">
               <FormLabel>Article Title *</FormLabel>
               <FormDescription className="font-normal text-muted text-[12px]">
-                A compelling title that captures the essence of your article
-                between 5-10 characters
+                A compelling title that captures the essence of your article.
               </FormDescription>
               <FormControl>
-                <Input type="text" placeholder="" className="h-9 " {...field} />
+                <Input type="text" placeholder="" className="h-9" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
-          name="sumary"
+          name="summary"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Brief Summary*</FormLabel>
@@ -109,38 +133,37 @@ export function ArticleForm({ post }: IActionProps) {
                 100 Characters
               </FormDescription>
               <FormControl>
-                <Input type="text" placeholder="" className="h-9 " {...field} />
+                <Input type="text" placeholder="" className="h-9" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        
-            <FormItem className="col-span-1">
-              <FormLabel>Article Body *</FormLabel>
-              <FormDescription className="font-normal text-muted text-[12px]">
-                Main body of your article
-              </FormDescription>
-              <FormControl>
-                <Controller
-                  control={form.control}
-                  name="body"
-                  render={({ field }) => (
-                    <JoditEditor
-                      ref={editor}
-                      value={field.value}
-                      config={config}
-                      onBlur={(newContent) => field.onChange(newContent)}
-                      onChange={(htmlString) => field.onChange(htmlString)}
-                      className="w-full h-[70%] mt-10 bg-white"
-                    />
-                  )}
+        <FormItem className="col-span-1">
+          <FormLabel>Article Body *</FormLabel>
+          <FormDescription className="font-normal text-muted text-[12px]">
+            Main body of your article.
+          </FormDescription>
+          <FormControl>
+            <Controller
+              control={form.control}
+              name="body"
+              render={({ field }) => (
+                <JoditEditor
+                  ref={editor}
+                  value={field.value}
+                  config={config}
+                  onBlur={(newContent) => field.onChange(newContent)}
+                  onChange={(htmlString) => field.onChange(htmlString)}
+                  className="w-full h-[70%] mt-10 bg-white"
                 />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-        
+              )}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+
         <FormField
           control={form.control}
           name="category"
@@ -156,9 +179,9 @@ export function ArticleForm({ post }: IActionProps) {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="light">Education</SelectItem>
-                    <SelectItem value="dark">Business</SelectItem>
-                    <SelectItem value="system">Marketing</SelectItem>
+                    <SelectItem value="education">Education</SelectItem>
+                    <SelectItem value="business">Business</SelectItem>
+                    <SelectItem value="marketing">Marketing</SelectItem>
                   </SelectContent>
                 </Select>
               </FormControl>
@@ -174,7 +197,7 @@ export function ArticleForm({ post }: IActionProps) {
             <FormItem>
               <FormLabel>Article Tags*</FormLabel>
               <FormDescription className="font-normal text-muted text-[12px]">
-                Add relevant tags that describe your article upto 5 tags
+                Add relevant tags that describe your article (up to 5 tags).
               </FormDescription>
               <FormControl>
                 <Select>
@@ -182,9 +205,9 @@ export function ArticleForm({ post }: IActionProps) {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="light">Health</SelectItem>
-                    <SelectItem value="dark">Technology</SelectItem>
-                    <SelectItem value="system">Blogging</SelectItem>
+                    <SelectItem value="health">Health</SelectItem>
+                    <SelectItem value="technology">Technology</SelectItem>
+                    <SelectItem value="blogging">Blogging</SelectItem>
                   </SelectContent>
                 </Select>
               </FormControl>
@@ -195,16 +218,20 @@ export function ArticleForm({ post }: IActionProps) {
 
         <FormField
           control={form.control}
-          name="image"
+          name="coverImage"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Upload Cover Image*</FormLabel>
+              <FormLabel>Upload Cover coverImage*</FormLabel>
               <FormDescription className="font-normal text-muted text-[12px]">
-                Upload an image (jpg, png) that represents your article
-                (1120x386px).
+                Upload a coverImage (jpg, png) that represents your article.
               </FormDescription>
               <FormControl>
-                <Input type="file" placeholder="" className="h-9 " {...field} />
+                <Input
+                  type="file"
+                  placeholder=""
+                  className="h-9"
+                  onChange={(e) => field.onChange(e.target.files)}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -213,9 +240,10 @@ export function ArticleForm({ post }: IActionProps) {
 
         <Button
           type="submit"
-          className=" font-semibold  text-[15px] border border-primary text-black w-full  "
+          className="font-semibold text-[15px] border border-primary text-black w-full"
+          disabled={isLoading}
         >
-          Save Changes
+          {isLoading ? "Saving..." : "Save Changes"}
         </Button>
       </form>
     </Form>

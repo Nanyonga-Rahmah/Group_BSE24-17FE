@@ -5,30 +5,41 @@ import { Button } from "./ui/button";
 import { Actions } from "./Actions";
 
 export interface IPost {
+  _id: string;
   title: string;
   description: string;
   postedBy: string;
   date: string;
-  imgUrl: string;
+  coverImage: string;
   aboutPostUrl: string;
   tags: string[];
-}
-export interface IPosts {
-  posts: IPost[];
-  post?: IPost;
+  summary: string;
+  category: string;
+  body: string;
+  profilePicture: string;
 }
 
-function Post({ posts }: IPosts) {
+export interface IPosts {
+  posts: IPost[];
+  onDeleteSuccess?: () => void;
+}
+
+function Posts({ posts, onDeleteSuccess }: IPosts) {
+  console.log("Posts............ff", posts);
+
+  // Renaming from Post to Posts
   const location = useLocation();
   const { pathname } = location;
+
   return (
     <>
-      <div className="flex flex-col  md:grid md:grid-cols-3 gap-10 md:mt-4 md:px-16">
+      <div className="flex flex-col md:grid md:grid-cols-3 gap-10 md:mt-4 md:px-16">
         {pathname === "/" && <LatestPost />}
         {posts.map((post, index) => (
           <div key={index} className="flex flex-col gap-2">
             <div className="grow">
-              <img src={post.aboutPostUrl} alt="About" />
+              <img src={`${post.coverImage}`} alt={post.title} />{" "}
+              {/* Using coverImage */}
             </div>
             <div className="flex gap-3">
               {post.tags?.map((tag, index) => (
@@ -46,21 +57,26 @@ function Post({ posts }: IPosts) {
             <div
               className={`${
                 pathname === "/my-articles"
-                  ? " flex justify-between"
-                  : "flex gap-3 "
+                  ? "flex justify-between"
+                  : "flex gap-3"
               }`}
             >
               {pathname === "/" && (
                 <div className="w-[11%]">
-                  <img src={post.imgUrl} alt={post.postedBy} />
+                  <img src={`${post.profilePicture}`} alt={post.postedBy} />{" "}
+                  {/* Same coverImage */}
                 </div>
               )}
               <div>
-                {pathname === "/" && <p className="text-[12px]">{post.postedBy}</p>}
+                {pathname === "/" && (
+                  <p className="text-[12px]">{post.postedBy}</p>
+                )}
                 <p className="text-muted text-[11px]">{post.date}</p>
               </div>
 
-              {pathname === "/my-articles" && <Actions post={post} />}
+              {pathname === "/my-articles" && (
+                <Actions post={post} onDeleteSuccess={onDeleteSuccess} />
+              )}
             </div>
           </div>
         ))}
@@ -77,4 +93,4 @@ function Post({ posts }: IPosts) {
   );
 }
 
-export default Post;
+export default Posts;
