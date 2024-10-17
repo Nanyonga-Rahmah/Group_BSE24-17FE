@@ -15,6 +15,8 @@ import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
 import { Lock, Mail } from "lucide-react";
 import { Login } from "@/lib/routes";
+import { useState } from "react";
+import { toast } from "sonner";
 
 const FormSchema = z.object({
   email: z.string().min(2, {
@@ -27,6 +29,7 @@ const FormSchema = z.object({
 
 export function LoginForm() {
   const navigate = useNavigate();
+  const [submitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -37,6 +40,7 @@ export function LoginForm() {
   });
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
+    setIsSubmitting(true);
     try {
       const response = await fetch(Login, {
         method: "POST",
@@ -51,16 +55,19 @@ export function LoginForm() {
       const data = await response.json();
 
       if (response.ok) {
+        toast.success("Login successful redirecting...");
         localStorage.setItem("IsLoggedIn", "true");
         localStorage.setItem("user", JSON.stringify(data.user));
 
         navigate("/");
         window.location.reload();
       } else {
-        console.error("Login failed:", data.message);
+        toast.error(data.message);
       }
     } catch (error) {
-      console.error("Error during login:", error);
+      toast.error("Try Again Later");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -122,8 +129,9 @@ export function LoginForm() {
         <Button
           type="submit"
           className="w-full font-normal text-base text-black"
+          disabled={submitting}
         >
-          Login
+          {submitting ? "Submitting..." : "Login"}
         </Button>
       </form>
     </Form>

@@ -13,10 +13,9 @@ function LandingPage({ status }: IStatus) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Fetch posts from the backend API
     const fetchPosts = async () => {
       try {
-        const response = await fetch(`${GetArticles}`); // Adjust to your API route
+        const response = await fetch(GetArticles); 
         if (!response.ok) {
           throw new Error("Failed to fetch posts");
         }
@@ -33,9 +32,8 @@ function LandingPage({ status }: IStatus) {
           tags: post.tags,
           profilePicture: post.author.profilePicture
             ? `${Api}/${post.author.profilePicture}`
-            : "/images/default-avatar.png", // Adjust the default image as necessary
+            : "/images/default-avatar.png", 
         }));
-        console.log("formattedPosts", formattedPosts);
 
         setPosts(formattedPosts);
         setLoading(false);

@@ -25,9 +25,7 @@ export interface IPosts {
 }
 
 function Posts({ posts, onDeleteSuccess }: IPosts) {
-  console.log("Posts............ff", posts);
-
-  // Renaming from Post to Posts
+console.log(posts);
   const location = useLocation();
   const { pathname } = location;
 
@@ -36,10 +34,9 @@ function Posts({ posts, onDeleteSuccess }: IPosts) {
       <div className="flex flex-col md:grid md:grid-cols-3 gap-10 md:mt-4 md:px-16">
         {pathname === "/" && <LatestPost />}
         {posts.map((post, index) => (
-          <div key={index} className="flex flex-col gap-2">
-            <div className="grow">
-              <img src={`${post.coverImage}`} alt={post.title} />{" "}
-              {/* Using coverImage */}
+          <div key={index} className="flex flex-col grow gap-2">
+            <div className="grow border min-h-[200px] rounded-lg overflow-hidden">
+              <img src={post.coverImage} alt={post.title} className="object-cover "/>
             </div>
             <div className="flex gap-3">
               {post.tags?.map((tag, index) => (
@@ -63,8 +60,7 @@ function Posts({ posts, onDeleteSuccess }: IPosts) {
             >
               {pathname === "/" && (
                 <div className="w-[11%]">
-                  <img src={`${post.profilePicture}`} alt={post.postedBy} />{" "}
-                  {/* Same coverImage */}
+                  <img src={post.profilePicture} alt={post.postedBy.slice(0,4)} />{" "}
                 </div>
               )}
               <div>
