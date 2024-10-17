@@ -22,7 +22,7 @@ function Header({ status }: IStatus) {
         </div>
         {status ? <ProfileDialog /> : <LoginDialog />}
         <div className="md:hidden">
-          <MobileNav  />
+          <MobileNav />
         </div>
       </div>
     </div>

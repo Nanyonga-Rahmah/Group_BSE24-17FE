@@ -2,20 +2,10 @@ import { useEffect, useState } from "react";
 import Footer from "@/components/Footer";
 import Header, { IStatus } from "@/components/Header";
 import Hero from "@/components/Hero";
-import Post from "@/components/Posts"; // Ensure this import is correct
+import Post from "@/components/Posts";
+import { IPost } from "@/components/Posts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-// Define the post interface to type the post data, including the author's profile picture
-export interface IPost {
-  title: string;
-  description: string;
-  postedBy: string;
-  date: string;
-  imgUrl: string;
-  aboutPostUrl: string;
-  tags: string[];
-  authorProfilePicture: string;
-}
+import { Api, GetArticles } from "@/lib/routes";
 
 function LandingPage({ status }: IStatus) {
   const [posts, setPosts] = useState<IPost[]>([]);
@@ -26,7 +16,7 @@ function LandingPage({ status }: IStatus) {
     // Fetch posts from the backend API
     const fetchPosts = async () => {
       try {
-        const response = await fetch("http://localhost:4040/blog"); // Adjust to your API route
+        const response = await fetch(`${GetArticles}`); // Adjust to your API route
         if (!response.ok) {
           throw new Error("Failed to fetch posts");
         }
@@ -36,15 +26,17 @@ function LandingPage({ status }: IStatus) {
           description: post.summary,
           postedBy: post.author.username,
           date: new Date(post.createdAt).toLocaleDateString(),
-          imgUrl: post.coverImage
-            ? `http://localhost:4040/${post.coverImage}`
-            : "/images/default-cover.png", // Adjust the base URL as necessary
+          coverImage: post.coverImage
+            ? `${Api}/${post.coverImage}`
+            : "/images/default-cover.png",
           aboutPostUrl: post.coverImage || "/images/default-cover.png",
           tags: post.tags,
-          authorProfilePicture: post.author.profilePicture
-            ? `http://localhost:4040/${post.author.profilePicture}`
+          profilePicture: post.author.profilePicture
+            ? `${Api}/${post.author.profilePicture}`
             : "/images/default-avatar.png", // Adjust the default image as necessary
         }));
+        console.log("formattedPosts", formattedPosts);
+
         setPosts(formattedPosts);
         setLoading(false);
       } catch (err: any) {

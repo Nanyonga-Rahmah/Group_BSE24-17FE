@@ -6,7 +6,7 @@ import { useLocation } from "react-router-dom";
 function ViewArticle({ status }: IStatus) {
   const location = useLocation();
   const { Post } = location.state || {};
-  console.log(Post);
+  console.log("post..............", Post);
 
   return (
     <div>

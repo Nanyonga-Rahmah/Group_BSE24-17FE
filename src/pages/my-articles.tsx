@@ -1,39 +1,61 @@
 import { useEffect, useState } from "react";
 import Header, { IStatus } from "@/components/Header";
-import Posts from "@/components/Posts"; // Correct import
-import { IPost } from "@/components/Posts"; // Import post interface
+import Posts from "@/components/Posts";
+import { IPost } from "@/components/Posts";
+import { Api, GetArticle } from "@/lib/routes";
+
+// Helper function to format post data
+const formatPostData = (post: any) => {
+  return {
+    _id: post._id,
+    body: post.body,
+    title: post.title,
+    description: post.summary,
+    postedBy: post.author?.username || "Unknown",
+    date: new Date(post.createdAt).toLocaleDateString(),
+    coverImage: post.coverImage
+      ? `${Api}/${post.coverImage}`
+      : "/images/default-cover.png",
+    aboutPostUrl: post.coverImage || "/images/default-cover.png",
+    tags: post.tags || [],
+    authorProfilePicture: post.author?.profilePicture
+      ? `${Api}/${post.author.profilePicture}`
+      : "/images/default-avatar.png",
+  };
+};
 
 function MyArticles({ status }: IStatus) {
   const [posts, setPosts] = useState<IPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    // Fetch user's articles
-    const fetchUserArticles = async () => {
-      try {
-        const response = await fetch("http://localhost:4040/blog/my-blogs", {
-          method: "GET",
-          credentials: "include",
-        });
-        if (!response.ok) {
-          throw new Error("Failed to fetch articles");
-        }
-        const data = await response.json();
-        setPosts(data);
-        setLoading(false);
-      } catch (err: any) {
-        setError(err.message);
-        setLoading(false);
+  const fetchUserArticles = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${GetArticle}`, {
+        method: "GET",
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch articles");
       }
-    };
+      const data = await response.json();
+      const formattedPosts = data.map((post: any) => formatPostData(post));
+      setPosts(formattedPosts);
+      setLoading(false);
+    } catch (err: any) {
+      setError(err.message);
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchUserArticles();
   }, []);
 
   return (
     <div>
-      <div className="p-4 bg-gradient-45 md:min-h-[40vh] max-w-[100vw] ">
+      <div className="p-4 bg-gradient-45 md:min-h-[40vh] max-w-[100vw]">
         <div className="md:py-7">
           <Header status={status} />
         </div>
@@ -49,7 +71,7 @@ function MyArticles({ status }: IStatus) {
         ) : error ? (
           <p>Error loading articles: {error}</p>
         ) : (
-          <Posts posts={posts} />
+          <Posts posts={posts} onDeleteSuccess={fetchUserArticles} />
         )}
       </main>
     </div>

@@ -5,20 +5,28 @@ import { Button } from "./ui/button";
 import { Actions } from "./Actions";
 
 export interface IPost {
+  _id: string;
   title: string;
   description: string;
   postedBy: string;
   date: string;
-  imgUrl: string;
+  coverImage: string;
   aboutPostUrl: string;
   tags: string[];
+  summary: string;
+  category: string;
+  body: string;
+  profilePicture: string;
 }
 
 export interface IPosts {
   posts: IPost[];
+  onDeleteSuccess?: () => void;
 }
 
-function Posts({ posts }: IPosts) {
+function Posts({ posts, onDeleteSuccess }: IPosts) {
+  console.log("Posts............ff", posts);
+
   // Renaming from Post to Posts
   const location = useLocation();
   const { pathname } = location;
@@ -30,7 +38,8 @@ function Posts({ posts }: IPosts) {
         {posts.map((post, index) => (
           <div key={index} className="flex flex-col gap-2">
             <div className="grow">
-              <img src={post.imgUrl} alt={post.title} /> {/* Using imgUrl */}
+              <img src={`${post.coverImage}`} alt={post.title} />{" "}
+              {/* Using coverImage */}
             </div>
             <div className="flex gap-3">
               {post.tags?.map((tag, index) => (
@@ -54,8 +63,8 @@ function Posts({ posts }: IPosts) {
             >
               {pathname === "/" && (
                 <div className="w-[11%]">
-                  <img src={post.imgUrl} alt={post.postedBy} />{" "}
-                  {/* Same imgUrl */}
+                  <img src={`${post.profilePicture}`} alt={post.postedBy} />{" "}
+                  {/* Same coverImage */}
                 </div>
               )}
               <div>
@@ -65,7 +74,9 @@ function Posts({ posts }: IPosts) {
                 <p className="text-muted text-[11px]">{post.date}</p>
               </div>
 
-              {pathname === "/my-articles" && <Actions post={post} />}
+              {pathname === "/my-articles" && (
+                <Actions post={post} onDeleteSuccess={onDeleteSuccess} />
+              )}
             </div>
           </div>
         ))}
