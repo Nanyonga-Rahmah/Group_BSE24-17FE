@@ -16,11 +16,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4 # Use the latest version of checkout
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
-      
+        uses: actions/setup-node@v4 # Use the latest version of setup-node
+        with:
+          node-version: '20.x'
 
       - name: Install dependencies
         run: npm install
