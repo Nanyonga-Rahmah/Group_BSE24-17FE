@@ -32,6 +32,10 @@ jobs:
       - name: Build project
         run: npm run build
 
+      # Move build to dist if not already set in package.json
+      - name: Move build to dist
+        run: mv build dist || echo "dist already exists"
+
   deploy-staging:
     needs: build
     runs-on: ubuntu-latest
