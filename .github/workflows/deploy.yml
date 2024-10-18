@@ -3,11 +3,11 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main
+      - master
       - Staging
   pull_request:
     branches:
-      - main
+      - master
       - Staging
 
 jobs:
