@@ -60,7 +60,7 @@ jobs:
       - name: Get Previous Deployment ID
         id: previous-deploy
         run: |
-          PREVIOUS_DEPLOY=$(npx netlify api listSiteDeploys --data '{"site_id": "$NETLIFY_SITE_ID"}' | jq -r '.[1].id')
+          PREVIOUS_DEPLOY=$(npx netlify api listSiteDeploys --data '{"site_id": "'$NETLIFY_SITE_ID'"}' | jq -r '.[1].id')
           echo "Previous deployment ID: $PREVIOUS_DEPLOY"
           echo "::set-output name=previous_deploy::$PREVIOUS_DEPLOY"
 
@@ -71,8 +71,12 @@ jobs:
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
           PREVIOUS_DEPLOY: ${{ steps.previous-deploy.outputs.previous_deploy }}
         run: |
-          echo "Rolling back to deployment ID $PREVIOUS_DEPLOY"
-          npx netlify deploy --prod --site $NETLIFY_SITE_ID --alias $PREVIOUS_DEPLOY
+          if [ -z "$PREVIOUS_DEPLOY" ]; then
+            echo "No previous deployment found, skipping rollback."
+          else
+            echo "Rolling back to deployment ID $PREVIOUS_DEPLOY"
+            npx netlify deploy --prod --site $NETLIFY_SITE_ID --alias "$PREVIOUS_DEPLOY"
+          fi
 
   monitoring:
     needs: [build, deploy-production]
