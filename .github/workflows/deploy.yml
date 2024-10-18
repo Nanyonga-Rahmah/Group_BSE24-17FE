@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: CI/CD Pipeline with Rollback and Monitoring
 
 on:
   push:
@@ -39,9 +39,9 @@ jobs:
     steps:
       - name: Deploy to Staging (Netlify)
         env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}  
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_STAGING_SITE_ID }}
-        run: npx netlify-cli deploy --dir=dist --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
+        run: npx netlify deploy --dir=dist --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
 
   deploy-production:
     needs: build
@@ -50,25 +50,29 @@ jobs:
     steps:
       - name: Deploy to Production (Netlify)
         env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}  
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        run: npx netlify-cli deploy --dir=dist --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
+        run: npx netlify deploy --dir=dist --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
 
       - name: Log Deployment Success
         run: echo "Deployment to production was successful"
 
-      - name: Check previous successful deployment
+      - name: Get Previous Deployment ID
         id: previous-deploy
         run: |
-          PREVIOUS_DEPLOY=$(npx netlify-cli list --json | jq -r '.deploys[1].id')
-          echo "::set-output name=previous-deploy::$PREVIOUS_DEPLOY"
+          PREVIOUS_DEPLOY=$(npx netlify api listSiteDeploys --data '{"site_id": "$NETLIFY_SITE_ID"}' | jq -r '.[1].id')
+          echo "Previous deployment ID: $PREVIOUS_DEPLOY"
+          echo "::set-output name=previous_deploy::$PREVIOUS_DEPLOY"
 
       - name: Rollback on Failure
         if: failure()
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          PREVIOUS_DEPLOY: ${{ steps.previous-deploy.outputs.previous-deploy }}
-        run: npx netlify-cli rollback --deployId $PREVIOUS_DEPLOY
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          PREVIOUS_DEPLOY: ${{ steps.previous-deploy.outputs.previous_deploy }}
+        run: |
+          echo "Rolling back to deployment ID $PREVIOUS_DEPLOY"
+          npx netlify deploy --prod --site $NETLIFY_SITE_ID --alias $PREVIOUS_DEPLOY
 
   monitoring:
     needs: [build, deploy-production]
@@ -97,9 +101,9 @@ jobs:
             scrape_interval: 15s
 
           scrape_configs:
-            - job_name: "app"
+            - job_name: "react-app"
               static_configs:
-                - targets: ["localhost:3000"]  # Replace with your app's metrics endpoint
+                - targets: ["localhost:3000"]  # Backend metrics or middleware handling React app
           EOF'
           sudo systemctl restart prometheus
 
