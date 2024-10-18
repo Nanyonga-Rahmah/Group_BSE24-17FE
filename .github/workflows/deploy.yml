@@ -32,20 +32,16 @@ jobs:
       - name: Build project
         run: npm run build
 
-      # Move build to dist if not already set in package.json
-      - name: Move build to dist
-        run: mv build dist || echo "dist already exists"
-
   deploy-staging:
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/staging'
+    if: github.ref == 'refs/heads/Staging'
     steps:
       - name: Deploy to Staging (Netlify)
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_STAGING_SITE_ID }}
-        run: npx netlify deploy --dir=dist --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
+        run: npx netlify deploy --dir=build --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
 
   deploy-production:
     needs: build
@@ -56,7 +52,7 @@ jobs:
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        run: npx netlify deploy --dir=dist --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
+        run: npx netlify deploy --dir=build --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
 
       - name: Log Deployment Success
         run: echo "Deployment to production was successful"
