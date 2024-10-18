@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 function Footer() {
   return (
-    <div className="flex justify-between  w-full bottom-0  bg-black text-white  py-2 px-4 md:px-20 h-13 ">
+    <div className="flex justify-between  w-full bottom-0 fixed bg-black text-white  py-2 px-4 md:px-20 h-13 ">
       <div>
         <h3>
           <span>&copy;</span>

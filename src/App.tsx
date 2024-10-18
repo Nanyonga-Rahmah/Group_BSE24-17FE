@@ -6,6 +6,8 @@ import Profile from "./pages/profile";
 import { useEffect, useState } from "react";
 import MyArticles from "./pages/my-articles";
 import ViewArticle from "./pages/view-article";
+import { Toaster } from '@/components/ui/sonner';
+
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
@@ -22,6 +24,8 @@ function App() {
   }, []);
   return (
     <>
+          <Toaster />
+
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage status={isLoggedIn} />}></Route>
