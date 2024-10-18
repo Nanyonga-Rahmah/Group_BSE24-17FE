@@ -110,7 +110,7 @@ export function SignupForm() {
                     <Input
                       type="text"
                       placeholder="Username"
-                      className="border-none h-10"
+                      className="border-none h-10 bg-gray-300"
                       {...field}
                     />
                   </div>
