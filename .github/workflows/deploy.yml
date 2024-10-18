@@ -1,0 +1,39 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - master
+      - Staging
+  pull_request:
+    branches:
+      - master
+      - Staging
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4 # Use the latest version of checkout
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4 # Use the latest version of setup-node
+        with:
+          node-version: '20.x'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build project
+        run: npm run build
+
+      - name: Deploy to Netlify
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}  
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}  
+        run: npx netlify-cli deploy --dir=dist --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
