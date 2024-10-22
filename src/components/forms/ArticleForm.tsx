@@ -117,8 +117,8 @@ export function ArticleForm() {
     try {
       const response = await fetch(CreateBlog, {
         method: "POST",
-        credentials: "include", // Send session cookies along with the request
         body: formData,
+        credentials: "include",
       });
 
       if (response.status === 201) {
