@@ -61,7 +61,7 @@ export function LoginForm() {
 
           navigate("/");
           window.location.reload();
-        }, 3000);
+        }, 5000);
         localStorage.setItem("IsLoggedIn", "true");
         localStorage.setItem("user", JSON.stringify(data.user));
       } else {

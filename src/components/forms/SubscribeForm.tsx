@@ -26,8 +26,8 @@ export function SubscribeForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-4 w-full">
-       <div className='flex border rounded-[10px] p-1'>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="" >
+       <div className='flex gap-5 border rounded-[10px] p-1 w-min'>
 
         <FormField
           control={form.control}
@@ -35,14 +35,14 @@ export function SubscribeForm() {
           render={({ field }) => (
             <FormItem className="w-[190px] md:w-[350px]">
               <FormControl>
-                <Input placeholder="Your email address " className='border-none ' {...field} />
+                <Input placeholder="Your email address " className='border ' {...field} />
               </FormControl>
 
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-[30%] bg-white text-black">
+        <Button type="submit" className="w-[30%] text-black">
           Subscribe
         </Button>
         </div>

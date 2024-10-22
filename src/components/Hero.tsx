@@ -2,12 +2,12 @@ import { SubscribeForm } from "./forms/SubscribeForm";
 
 function Hero() {
   return (
-    <div className="flex flex-col md:flex-row max-w-[100vw] overflow-x-hidden md:gap-10 my-[9vh] md:px-5 items-center ">
-      <div className="md:w-[60vw] my-4 md:my-0  ">
-        <h3 className="text-primary text-base my-2 md:my-0 font-normal md:text-xl">
+    <div className="flex flex-col  lg:flex-row max-w-[100vw] overflow-x-hidden lg:gap-10  md:my-10 lg:my-[9vh] md:px-5 items-center ">
+      <div className="lg:w-[60vw] my-4 md:my-2  ">
+        <h3 className="text-primary text-base my-2 md:my-0 md:text-center lg:text-left font-normal md:text-xl">
           WELCOME TO GOODBLOGGER
         </h3>
-        <p className="font-bold text-xl md:text-[40px] md:my-2 text-white md:leading-[54px] font-[Raleway]">
+        <p className="font-bold text-xl lg:text-[40px] md:my-2 text-white lg:leading-[54px] font-[Raleway]">
           Your go-to platform for sharing insights, stories, and knowledge with
           the world.
         </p>

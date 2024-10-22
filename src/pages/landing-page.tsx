@@ -48,8 +48,8 @@ function LandingPage({ status }: IStatus) {
 
   return (
     <div>
-      <div className="p-5 md:px-20 bg-gradient-45 md:min-h-[70vh] max-w-[100vw] overflow-x-hidden">
-        <div className="md:py-7 sticky top-0">
+      <div className="p-5 md:px-20 bg-gradient-45 lg:min-h-[70vh] max-w-[100vw] overflow-x-hidden">
+        <div className="md:py-7  sticky top-0">
           <Header status={status} />
         </div>
         <Hero />

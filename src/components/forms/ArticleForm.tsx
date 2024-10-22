@@ -65,7 +65,6 @@ export function ArticleForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const editor = useRef(null);
   const author = localStorage.getItem("authorId") || "66f4832e698a50dde97f5896";
-  console.log(author);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -109,10 +108,7 @@ export function ArticleForm() {
     if (values.coverImage && values.coverImage[0]) {
       formData.append("coverImage", values.coverImage[0]);
     }
-    // Log form data to console
-    for (let [key, value] of formData.entries()) {
-      console.log(`${key}:`, value);
-    }
+    
 
     try {
       const response = await fetch(CreateBlog, {
@@ -122,7 +118,7 @@ export function ArticleForm() {
       });
 
       if (response.status === 201) {
-        toast("Blog created successfully!", {
+        toast.success("Blog created successfully!", {
           className:
             "border border-primary text-center text-base flex justify-center rounded-lg mb-2",
         });
@@ -132,7 +128,7 @@ export function ArticleForm() {
         throw new Error(error.message || "Failed to create blog");
       }
     } catch (error) {
-      toast(`Failed to create blog: ${(error as Error).message}`, {
+      toast.error(`Failed to create blog: ${(error as Error).message}`, {
         className:
           "border border-error text-center text-base flex justify-center rounded-lg mb-2",
       });

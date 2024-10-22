@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {  Routes, Route, HashRouter } from "react-router-dom";
 import LandingPage from "./pages/landing-page";
 import ArticlePage from "./pages/article-page";
 import WriteArticle from "./pages/write-article";
@@ -26,7 +26,7 @@ function App() {
     <>
           <Toaster />
 
-      <BrowserRouter>
+      <HashRouter>
         <Routes>
           <Route path="/" element={<LandingPage status={isLoggedIn} />}></Route>
           <Route
@@ -48,7 +48,7 @@ function App() {
             element={<ViewArticle status={isLoggedIn} />}
           />
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </>
   );
 }
