@@ -33,7 +33,7 @@ jobs:
         run: npm run build
 
   deploy-staging:
-    needs: build
+    needs: [build]
     runs-on: ubuntu-latest
     # if: github.ref == 'refs/heads/Staging'
     steps:
