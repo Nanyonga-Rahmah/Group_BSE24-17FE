@@ -37,6 +37,10 @@ jobs:
         with:
           name: dist
           path: dist
+
+      - name: Verify build output
+        run: ls -la dist
+   
           
   deploy-staging:
     needs: build
