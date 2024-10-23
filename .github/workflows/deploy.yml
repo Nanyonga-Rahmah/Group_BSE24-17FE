@@ -54,29 +54,13 @@ jobs:
         run: ls -la
 
       - name: List full directory tree
-        run: find . -type d
-
-      - name: Locate downloaded artifact
-        run: find . -name dist
-
-      - name: Move dist folder to current directory
-        run: |
-          ARTIFACT_PATH=$(find . -name dist)
-          echo "Artifact path: $ARTIFACT_PATH"
-          if [ -z "$ARTIFACT_PATH" ]; then
-            echo "No dist folder found."
-            exit 1
-          fi
-          mv $ARTIFACT_PATH ./dist
-
-      - name: Verify dist folder
-        run: ls -la dist
+        run: pwd      
 
       - name: Deploy to Staging (Netlify)
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        run: npx netlify-cli deploy --dir=dist --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
+        run: npx netlify-cli deploy --dir=/home/runner/work/Group_BSE24-17FE/Group_BSE24-17FE --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
 
 
   
