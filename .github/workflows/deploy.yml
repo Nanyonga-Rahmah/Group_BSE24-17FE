@@ -62,9 +62,15 @@ jobs:
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         run: npx netlify-cli deploy --dir=/home/runner/work/Group_BSE24-17FE/Group_BSE24-17FE --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
 
+      - name: Check Deployment Status
+        run: |
+          if [ $(npx netlify-cli status --site $NETLIFY_SITE_ID | grep 'state: live' | wc -l) -eq 0 ]; then
+            echo "Deployment failed. Initiating rollback..."
+            npx netlify-cli deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN --rollback
+          else
+            echo "Deployment successful."
+          fi
 
-  
-    
   deploy-production:
     needs: build
     runs-on: ubuntu-latest
@@ -75,47 +81,17 @@ jobs:
         with:
           name: dist
 
-      
-
-
       - name: Deploy to Production (Netlify)
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_PRODUCTION_SITE_ID }}
-        run: npx netlify-cli deploy --dir=/home/runner/work/Group_BSE24-17FE/Group_BSE24-17FE --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN    
-  # deploy-production:
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   if: github.ref == 'refs/heads/master'
-  #   steps:
-  #     - name: Deploy to Production (Netlify)
-  #       env:
-  #         NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-  #         NETLIFY_SITE_ID: ${{ secrets.NETLIFY_PRODUCTION_SITE_ID }}
-  #       run: npx netlify-cli deploy --dir=dist --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
+        run: npx netlify-cli deploy --dir=/home/runner/work/Group_BSE24-17FE/Group_BSE24-17FE --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
 
-  #     - name: Log Deployment Success
-  #       run: echo "Deployment to production was successful"
-
-  #     - name: Get Previous Deployment ID
-  #       id: previous-deploy
-  #       run: |
-  #         PREVIOUS_DEPLOY=$(npx netlify api listSiteDeploys --data '{"site_id": "'$NETLIFY_SITE_ID'"}' | jq -r '.[1].id')
-  #         echo "Previous deployment ID: $PREVIOUS_DEPLOY"
-  #         echo "::set-output name=previous_deploy::$PREVIOUS_DEPLOY"
-
-  #     - name: Rollback on Failure
-  #       if: failure()
-  #       env:
-  #         NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-  #         NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-  #         PREVIOUS_DEPLOY: ${{ steps.previous-deploy.outputs.previous_deploy }}
-  #       run: |
-  #         if [ -z "$PREVIOUS_DEPLOY" ]; then
-  #           echo "No previous deployment found, skipping rollback."
-  #         else
-  #           echo "Rolling back to deployment ID $PREVIOUS_DEPLOY"
-  #           npx netlify deploy --prod --site $NETLIFY_SITE_ID --alias "$PREVIOUS_DEPLOY"
-  #         fi
-
-  
+      - name: Check Deployment Status
+        run: |
+          if [ $(npx netlify-cli status --site $NETLIFY_PRODUCTION_SITE_ID | grep 'state: live' | wc -l) -eq 0 ]; then
+            echo "Deployment failed. Initiating rollback..."
+            npx netlify-cli deploy --site $NETLIFY_PRODUCTION_SITE_ID --auth $NETLIFY_AUTH_TOKEN --rollback
+          else
+            echo "Deployment successful."
+          fi
