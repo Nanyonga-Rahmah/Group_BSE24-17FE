@@ -32,11 +32,21 @@ jobs:
       - name: Build project
         run: npm run build
 
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist
+          
   deploy-staging:
-    needs: [build]
+    needs: build
     runs-on: ubuntu-latest
-    # if: github.ref == 'refs/heads/Staging'
     steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: dist
+
       - name: Deploy to Staging (Netlify)
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
