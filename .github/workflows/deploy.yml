@@ -49,20 +49,26 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: dist
-  
+
+      - name: Locate downloaded artifact
+        run: find . -name dist
+
       - name: Move dist folder to current directory
-        run: mv /home/runner/work/Group_BSE24-17FE/Group_BSE24-17FE/dist ./dist
-  
+        run: |
+          ARTIFACT_PATH=$(find . -name dist)
+          echo "Artifact path: $ARTIFACT_PATH"
+          mv $ARTIFACT_PATH ./dist
+
       - name: Verify dist folder
         run: ls -la dist
-  
+
       - name: Deploy to Staging (Netlify)
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         run: npx netlify-cli deploy --dir=dist --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
+
   
-     
           
   # deploy-production:
   #   needs: build
