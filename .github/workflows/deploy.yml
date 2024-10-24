@@ -53,21 +53,14 @@ jobs:
       - name: List current directory
         run: ls -la
 
-      - name: List full directory tree
-        run: pwd      
-
       - name: Deploy to Staging (Netlify)
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         run: npx netlify-cli deploy --dir=dist --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
 
-      - name: Check for deployment failure (Rollback if necessary)
-        if: failure()
-        run: npx netlify-cli rollback --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
-
   deploy-production:
-    needs: build
+    needs: deploy-staging
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
     steps:
@@ -82,6 +75,17 @@ jobs:
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_PRODUCTION_SITE_ID }}
         run: npx netlify-cli deploy --dir=dist --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
 
-      - name: Check for deployment failure (Rollback if necessary)
-        if: failure()
-        run: npx netlify-cli rollback --site $NETLIFY_PRODUCTION_SITE_ID --auth $NETLIFY_AUTH_TOKEN
+  rollback:
+    needs: [deploy-staging, deploy-production]
+    runs-on: ubuntu-latest
+    if: failure()
+    steps:
+      - name: Check which environment failed and rollback
+        run: |
+          if [[ $GITHUB_REF == "refs/heads/master" ]]; then
+            echo "Rolling back production deployment..."
+            npx netlify-cli rollback --site ${{ secrets.NETLIFY_PRODUCTION_SITE_ID }} --auth ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          else
+            echo "Rolling back staging deployment..."
+            npx netlify-cli rollback --site ${{ secrets.NETLIFY_SITE_ID }} --auth ${{ secrets.NETLIFY_AUTH_TOKEN }}
+
