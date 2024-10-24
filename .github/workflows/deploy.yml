@@ -60,11 +60,12 @@ jobs:
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        run: npx netlify-cli deploy --dir=/home/runner/work/Group_BSE24-17FE/Group_BSE24-17FE --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
+        run: npx netlify-cli deploy --dir=dist --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
 
+      - name: Check for deployment failure (Rollback if necessary)
+        if: failure()
+        run: npx netlify-cli rollback --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
 
-  
-    
   deploy-production:
     needs: build
     runs-on: ubuntu-latest
@@ -75,11 +76,12 @@ jobs:
         with:
           name: dist
 
-      
-
-
       - name: Deploy to Production (Netlify)
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_PRODUCTION_SITE_ID }}
-        run: npx netlify-cli deploy --dir=/home/runner/work/Group_BSE24-17FE/Group_BSE24-17FE --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN  
+        run: npx netlify-cli deploy --dir=dist --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
+
+      - name: Check for deployment failure (Rollback if necessary)
+        if: failure()
+        run: npx netlify-cli rollback --site $NETLIFY_PRODUCTION_SITE_ID --auth $NETLIFY_AUTH_TOKEN
