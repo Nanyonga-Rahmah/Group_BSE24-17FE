@@ -7,9 +7,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { DeleteArticle } from "@/lib/routes"; // Ensure this is your delete route
+import { DeleteArticle } from "@/lib/routes"; 
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export interface DeleteDialogProps {
   postId?: string;
@@ -31,15 +32,14 @@ export function DeleteDialog({ postId, onDeleteSuccess }: DeleteDialogProps) {
         if (onDeleteSuccess) {
           onDeleteSuccess();
         }
-        alert("Article deleted successfully");
+        toast.success("Article deleted successfully");
       } else {
-        alert("Failed to delete the article. Please try again.");
+        toast.success("Failed to delete the article. Please try again.");
       }
     } catch (error) {
-      console.error("Error deleting article:", error);
-      alert("An error occurred while deleting the article. Please try again.");
+      toast.error("An error occurred while deleting the article. Please try again.");
     } finally {
-      setIsDeleting(false); // Reset loading state
+      setIsDeleting(false); 
     }
   };
 
@@ -51,7 +51,7 @@ export function DeleteDialog({ postId, onDeleteSuccess }: DeleteDialogProps) {
           <span>Delete</span>
         </div>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] w-[89%] md:w-[30%] rounded-md my-3">
+      <DialogContent className="sm:max-w-[425px] w-[89%] md:w-max rounded-md my-3">
         <DialogHeader>
           <DialogTitle className="font-bold text-xl">
             Delete this article?
@@ -61,19 +61,19 @@ export function DeleteDialog({ postId, onDeleteSuccess }: DeleteDialogProps) {
             to proceed?
           </DialogDescription>
         </DialogHeader>
-        <div className="flex justify-between gap-4">
+        <div className="md:grid grid-cols-2 gap-4">
           <Button
             variant={"outline"}
-            className="bg-white grow h-12 rounded-lg text-black"
-            onClick={() => setIsDeleting(false)} // Option to keep the article
+            className="bg-white px-2 grow h-12 rounded-lg text-black"
+            onClick={() => setIsDeleting(false)} 
           >
             No, keep it
           </Button>
           <Button
             variant={"outline"}
-            className="bg-red-400 rounded-lg h-12 text-white"
-            onClick={handleDelete} // Delete the post
-            disabled={isDeleting} // Disable during deletion
+            className="bg-red-400  rounded-lg h-12 px-2 text-white"
+            onClick={handleDelete} 
+            disabled={isDeleting} 
           >
             {isDeleting ? "Deleting..." : "Yes, delete Article"}
           </Button>

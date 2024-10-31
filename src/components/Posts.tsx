@@ -25,7 +25,7 @@ export interface IPosts {
 }
 
 function Posts({ posts, onDeleteSuccess }: IPosts) {
-console.log(posts);
+  console.log(posts);
   const location = useLocation();
   const { pathname } = location;
 
@@ -35,8 +35,8 @@ console.log(posts);
         {pathname === "/" && <LatestPost />}
         {posts.map((post, index) => (
           <div key={index} className="flex flex-col grow gap-2">
-            <div className="grow border min-h-[200px] rounded-lg overflow-hidden">
-              <img src={post.coverImage} alt={post.title} className="object-cover "/>
+            <div className="grow border max-h-[200px] min-h-[200px] rounded-lg overflow-hidden">
+              <img src={post.coverImage} alt={post.title} className=" w-full h-full object-cover" />
             </div>
             <div className="flex gap-3">
               {post.tags?.map((tag, index) => (
@@ -60,7 +60,10 @@ console.log(posts);
             >
               {pathname === "/" && (
                 <div className="w-[11%]">
-                  <img src={post.profilePicture} alt={post.postedBy.slice(0,4)} />{" "}
+                  <img
+                    src={post.profilePicture}
+                    alt={post.postedBy.slice(0, 4)}
+                  />{" "}
                 </div>
               )}
               <div>
@@ -80,7 +83,7 @@ console.log(posts);
 
       {pathname === "/" && (
         <div className="flex justify-center my-20 ">
-          <Button className="bg-black text-white md:w-[8%] h-10 rounded-[60px]">
+          <Button className="bg-black text-white md:w-[8%]px-4 h-10 rounded-[60px]">
             See More
           </Button>
         </div>

@@ -55,13 +55,18 @@ export function LoginForm() {
       const data = await response.json();
 
       if (response.ok) {
-        toast.success("Login successful redirecting...");
+        console.log("................");
+        setTimeout(() => {
+          toast.success("Login successful redirecting...");
+
+          navigate("/");
+          window.location.reload();
+        }, 5000);
         localStorage.setItem("IsLoggedIn", "true");
         localStorage.setItem("user", JSON.stringify(data.user));
-
-        navigate("/");
-        window.location.reload();
       } else {
+        console.log("......@@@@@@@@@@@@..........");
+
         toast.error(data.message);
       }
     } catch (error) {

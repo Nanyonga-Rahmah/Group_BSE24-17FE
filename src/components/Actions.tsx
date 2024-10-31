@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import { IPost } from "./Posts";
 export interface IActionProps {
   post?: IPost;
-  onDeleteSuccess?: () => void; // Add this prop
+  onDeleteSuccess?: () => void; 
 }
 
 export function Actions({ post, onDeleteSuccess }: IActionProps) {

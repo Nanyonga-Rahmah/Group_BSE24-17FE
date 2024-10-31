@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 function ArticlePage({ status }: IStatus) {
   return (
     <div>
-      <div className=" px-20 bg-gradient-45 md:min-h-[60vh] max-w-[100vw] ">
+      <div className=" px-20 bg-gradient-45 md:min-h-[40vh] max-w-[100vw] ">
         <div className="py-7">
           <Header status={status} />
         </div>
